@@ -30,8 +30,17 @@ const Upload = ({navigation}) => {
     const formData = new FormData();
     // add text to formData
     formData.append('title', inputs.title);
-    formData.append('description', inputs.description);
+    // formData.append('description', inputs.description);
     // add image to formData
+
+    const extraData = {
+      description: inputs.description,
+      price: inputs.price,
+      location: inputs.location,
+    };
+
+    formData.append('description', JSON.stringify(extraData));
+
     const filename = image.split('/').pop();
     const match = /\.(\w+)$/.exec(filename);
     let type = match ? `${filetype}/${match[1]}` : filetype;
@@ -42,6 +51,7 @@ const Upload = ({navigation}) => {
       type: type,
     });
     try {
+      console.log(formData);
       setIsUploading(true);
       const userToken = await AsyncStorage.getItem('userToken');
       const resp = await upload(formData, userToken);
@@ -150,6 +160,18 @@ const Upload = ({navigation}) => {
             onChangeText={(txt) => handleInputChange('description', txt)}
             errorMessage={uploadErrors.description}
           />
+          <Input
+            placeholder="price"
+            value={inputs.price}
+            onChangeText={(txt) => handleInputChange('price', txt)}
+            errorMessage={uploadErrors.price}
+          />
+          <Input
+            placeholder="location"
+            value={inputs.location}
+            onChangeText={(txt) => handleInputChange('location', txt)}
+            errorMessage={uploadErrors.location}
+          />
           <Button title="Choose from library" onPress={() => pickImage(true)} />
           <Button title="Use camera" onPress={() => pickImage(false)} />
           {isUploading && <ActivityIndicator size="large" color="#0000ff" />}
@@ -159,6 +181,8 @@ const Upload = ({navigation}) => {
             disabled={
               uploadErrors.title !== null ||
               uploadErrors.description !== null ||
+              uploadErrors.price !== null ||
+              uploadErrors.location !== null ||
               image === null
             }
           />

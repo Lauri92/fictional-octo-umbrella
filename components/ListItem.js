@@ -9,7 +9,11 @@ import {MainContext} from '../contexts/MainContext';
 import {Alert} from 'react-native';
 
 const ListItem = ({navigation, singleMedia, isMyFile}) => {
-  // console.log(props);
+  const allData = JSON.parse(singleMedia.description);
+  const description = allData.description;
+  const price = allData.price;
+  const location = allData.location;
+
   const {deleteFile} = useMedia();
   const {setUpdate, update} = useContext(MainContext);
   // console.log(singleMedia);
@@ -52,7 +56,9 @@ const ListItem = ({navigation, singleMedia, isMyFile}) => {
       ></Avatar>
       <RNEListItem.Content>
         <RNEListItem.Title h4>{singleMedia.title}</RNEListItem.Title>
-        <RNEListItem.Subtitle>{singleMedia.description}</RNEListItem.Subtitle>
+        <RNEListItem.Subtitle>{description}</RNEListItem.Subtitle>
+        <RNEListItem.Subtitle>{price}</RNEListItem.Subtitle>
+        <RNEListItem.Subtitle>{location}</RNEListItem.Subtitle>
         {/* {isMyFile && (
           <>
             <Button

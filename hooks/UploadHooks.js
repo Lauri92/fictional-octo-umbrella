@@ -20,12 +20,32 @@ const constraints = {
       message: 'min length is 5 characters',
     },
   },
+  price: {
+    presence: {
+      message: 'cannot be empty',
+    },
+    length: {
+      minimum: 1,
+      message: 'min length is 1 characters',
+    },
+  },
+  location: {
+    presence: {
+      message: 'cannot be empty',
+    },
+    length: {
+      minimum: 3,
+      message: 'min length is 3 characters',
+    },
+  },
 };
 
 const useUploadForm = (callback) => {
   const [inputs, setInputs] = useState({
     title: '',
     description: '',
+    price: '',
+    location: '',
   });
   const [uploadErrors, setUploadErrors] = useState({});
 
@@ -51,6 +71,8 @@ const useUploadForm = (callback) => {
     setInputs({
       title: '',
       description: '',
+      price: '',
+      location: '',
     });
     setUploadErrors({});
   };

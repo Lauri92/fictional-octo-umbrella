@@ -12,6 +12,10 @@ import {ScrollView} from 'react-native-gesture-handler';
 
 const Single = ({route}) => {
   const {file} = route.params;
+  const allData = JSON.parse(file.description);
+  const description = allData.description;
+  const price = allData.price;
+  const location = allData.location;
   const [avatar, setAvatar] = useState('http://placekitten.com/100');
   const [owner, setOwner] = useState({username: 'somebody'});
   const {getFilesByTag} = useTag();
@@ -113,7 +117,9 @@ const Single = ({route}) => {
           />
         )}
         <Card.Divider />
-        <Text style={styles.description}>{file.description}</Text>
+        <Text style={styles.description}>{description}</Text>
+        <Text style={styles.description}>{price}</Text>
+        <Text style={styles.description}>{location}</Text>
         <ListItem>
           <Avatar source={{uri: avatar}} />
           <Text>{owner.username}</Text>
