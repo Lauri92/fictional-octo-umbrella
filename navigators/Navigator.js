@@ -15,6 +15,7 @@ import Login from '../views/Login';
 import {MainContext} from '../contexts/MainContext';
 import {Icon} from 'react-native-elements';
 import Upload from '../views/Upload';
+import MyFiles from '../views/MyFiles';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -64,9 +65,9 @@ const StackScreen = () => {
               headerTitle: getFocusedRouteNameFromRoute(route),
             })}
           />
-          {/* <Stack.Screen name="Modify" component={Modify} />
+          {/* <Stack.Screen name="Modify" component={Modify} />*/}
           <Stack.Screen name="My Files" component={MyFiles} />
-          <Stack.Screen name="Single" component={Single} /> */}
+          <Stack.Screen name="Single" component={Single} />
         </>
       ) : (
         <>
