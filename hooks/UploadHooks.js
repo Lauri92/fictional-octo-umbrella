@@ -28,6 +28,9 @@ const constraints = {
       minimum: 1,
       message: 'min length is 1 characters',
     },
+    numericality: {
+      message: 'not allowed',
+    },
   },
   location: {
     presence: {

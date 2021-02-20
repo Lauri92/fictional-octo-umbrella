@@ -165,6 +165,7 @@ const Upload = ({navigation}) => {
             value={inputs.price}
             onChangeText={(txt) => handleInputChange('price', txt)}
             errorMessage={uploadErrors.price}
+            keyboardType="number-pad"
           />
           <Input
             placeholder="location"
