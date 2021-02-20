@@ -10,6 +10,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as ScreenOrientation from 'expo-screen-orientation';
 import {ScrollView} from 'react-native-gesture-handler';
 import CommentList from '../components/CommentList';
+import FloatingActionButton from '../components/FloatingActionButton';
 
 const Single = ({route}) => {
   const {file} = route.params;
@@ -91,47 +92,52 @@ const Single = ({route}) => {
   }, [videoRef]);
 
   return (
-    <ScrollView>
-      <Card>
-        <Card.Title h4>{file.title}</Card.Title>
-        <Card.Title>{moment(file.time_added).format('LLL')}</Card.Title>
-        <Card.Divider />
-        {file.media_type === 'image' ? (
-          <Card.Image
-            source={{uri: uploadsUrl + file.filename}}
-            style={styles.image}
-            PlaceholderContent={<ActivityIndicator />}
-          />
-        ) : (
-          <Video
-            ref={handleVideoRef}
-            source={{uri: uploadsUrl + file.filename}}
-            style={styles.image}
-            useNativeControls={true}
-            resizeMode="cover"
-            onError={(err) => {
-              console.error('video', err);
-            }}
-            posterSource={{uri: uploadsUrl + file.screenshot}}
-          />
-        )}
-        <Card.Divider />
-        <Text style={styles.description}>{description}</Text>
-        <Text style={styles.description}>{price}€</Text>
-        <Text style={styles.description}>Location: {location}</Text>
-        <ListItem>
-          <Avatar source={{uri: avatar}} />
-          <Text>
-            Posted by: {owner.username}
-            {'\n'}
-            Contact info: {owner.email}
-          </Text>
-        </ListItem>
-        <Card.Divider />
-        <Card.Title h2>Comments</Card.Title>
-        <CommentList file={file} />
-      </Card>
-    </ScrollView>
+    <>
+      <ScrollView>
+        <Card>
+          <Card.Title h4>{file.title}</Card.Title>
+          <Card.Title>{moment(file.time_added).format('LLL')}</Card.Title>
+          <Card.Divider />
+          {file.media_type === 'image' ? (
+            <Card.Image
+              source={{uri: uploadsUrl + file.filename}}
+              style={styles.image}
+              PlaceholderContent={<ActivityIndicator />}
+            />
+          ) : (
+            <Video
+              ref={handleVideoRef}
+              source={{uri: uploadsUrl + file.filename}}
+              style={styles.image}
+              useNativeControls={true}
+              resizeMode="cover"
+              onError={(err) => {
+                console.error('video', err);
+              }}
+              posterSource={{uri: uploadsUrl + file.screenshot}}
+            />
+          )}
+          <Card.Divider />
+          <Text style={styles.description}>{description}</Text>
+          <Text style={styles.description}>{price}€</Text>
+          <Text style={styles.description}>Location: {location}</Text>
+          <ListItem>
+            <Avatar source={{uri: avatar}} />
+            <Text>
+              Posted by: {owner.username}
+              {'\n'}
+              Contact info: {owner.email}
+            </Text>
+          </ListItem>
+          <Card.Divider />
+        </Card>
+        <Card>
+          <Card.Title h2>Comments</Card.Title>
+          <CommentList file={file} />
+        </Card>
+      </ScrollView>
+      <FloatingActionButton />
+    </>
   );
 };
 
