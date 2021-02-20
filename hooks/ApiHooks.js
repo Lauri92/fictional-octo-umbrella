@@ -46,6 +46,23 @@ const useLoadMedia = (myFilesOnly, userId) => {
   return mediaArray;
 };
 
+const useLoadComments = (fileId) => {
+  const [commentArray, setCommentArray] = useState([]);
+  const loadComments = async () => {
+    try {
+      console.log('fileId: ', fileId);
+      const comments = await doFetch(baseUrl + 'comments/file/' + fileId);
+      setCommentArray(comments);
+    } catch (error) {
+      console.error('loadComments error', error.message);
+    }
+  };
+  useEffect(() => {
+    loadComments();
+  }, []);
+  return commentArray;
+};
+
 const useLogin = () => {
   const postLogin = async (userCredentials) => {
     const options = {
@@ -197,4 +214,4 @@ const useMedia = () => {
   return {upload, updateFile, deleteFile};
 };
 
-export {useLoadMedia, useLogin, useUser, useTag, useMedia};
+export {useLoadMedia, useLoadComments, useLogin, useUser, useTag, useMedia};

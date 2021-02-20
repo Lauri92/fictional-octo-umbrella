@@ -121,10 +121,15 @@ const Single = ({route}) => {
         <Text style={styles.description}>Location: {location}</Text>
         <ListItem>
           <Avatar source={{uri: avatar}} />
-          <Text>{owner.username}</Text>
+          <Text>
+            Posted by: {owner.username}
+            {'\n'}
+            Contact info: {owner.email}
+          </Text>
         </ListItem>
         <Card.Divider />
-        <CommentList />
+        <Card.Title h2>Comments</Card.Title>
+        <CommentList file={file} />
       </Card>
     </ScrollView>
   );
