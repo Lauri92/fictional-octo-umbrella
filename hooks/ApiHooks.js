@@ -256,7 +256,22 @@ const useComment = () => {
     }
   };
 
-  return {uploadComment};
+  const deleteComment = async (commentId, token) => {
+    const options = {
+      method: 'DELETE',
+      headers: {
+        'x-access-token': token,
+      },
+    };
+    try {
+      const json = await doFetch(baseUrl + 'comments/' + commentId, options);
+      return json;
+    } catch (e) {
+      throw new Error(e.message);
+    }
+  };
+
+  return {uploadComment, deleteComment};
 };
 
 export {

@@ -4,7 +4,7 @@ import {FAB} from 'react-native-paper';
 import PropTypes from 'prop-types';
 
 // FFFF00; -> Yellow
-const FavoriteButton = ({toggleOverlay}) => (
+const FavoriteButton = ({favoriteInteraction}) => (
   <FAB
     style={styles.fab}
     medium
@@ -24,7 +24,7 @@ const styles = StyleSheet.create({
 });
 
 FavoriteButton.propTypes = {
-  toggleOverlay: PropTypes.func,
+  favoriteInteraction: PropTypes.func,
 };
 
 export default FavoriteButton;

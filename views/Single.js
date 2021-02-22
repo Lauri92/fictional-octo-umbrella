@@ -24,7 +24,6 @@ import {MainContext} from '../contexts/MainContext';
 
 const Single = ({route}) => {
   const {file} = route.params;
-  console.log(file);
   const allData = JSON.parse(file.description);
   const {description, price, location} = allData;
   const [avatar, setAvatar] = useState('http://placekitten.com/100');
