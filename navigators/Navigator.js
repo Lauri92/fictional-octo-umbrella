@@ -37,7 +37,7 @@ const TabScreen = () => {
               iconName = 'cloud-upload';
               break;
             case 'Bookmarks':
-              iconName = 'bookmarks';
+              iconName = 'star';
               break;
           }
           return <Icon name={iconName} size={size} color={color} />;

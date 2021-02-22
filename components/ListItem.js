@@ -16,7 +16,7 @@ const ListItem = ({navigation, singleMedia, isMyFile}) => {
   const {setUpdate, update} = useContext(MainContext);
   // console.log(singleMedia);
 
-  /* const doDelete = () => {
+  const doDelete = () => {
     Alert.alert(
       'Delete',
       'this file permanently?',
@@ -39,7 +39,7 @@ const ListItem = ({navigation, singleMedia, isMyFile}) => {
       {cancelable: false}
     );
   };
- */
+
   return (
     <RNEListItem
       bottomDivider
@@ -59,15 +59,15 @@ const ListItem = ({navigation, singleMedia, isMyFile}) => {
         </RNEListItem.Subtitle>
         <RNEListItem.Subtitle>Price: {price}€</RNEListItem.Subtitle>
         <RNEListItem.Subtitle>Location: {location}</RNEListItem.Subtitle>
-        {/* {isMyFile && (
+        {isMyFile && (
           <>
-            <Button
+            {/* <Button
               title="Modify"
               onPress={() => navigation.push('Modify', {file: singleMedia})}
-            ></Button>
+            ></Button> */}
             <Button title="Delete" color="red" onPress={doDelete}></Button>
           </>
-        )} */}
+        )}
       </RNEListItem.Content>
       <RNEListItem.Chevron />
     </RNEListItem>

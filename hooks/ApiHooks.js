@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import {useContext, useEffect, useState} from 'react';
 import {MainContext} from '../contexts/MainContext';
@@ -19,25 +20,45 @@ const doFetch = async (url, options = {}) => {
   }
 };
 
-const useLoadMedia = (myFilesOnly, userId) => {
+const useLoadMedia = (myFilesOnly, userId, onlyFavorites) => {
   const [mediaArray, setMediaArray] = useState([]);
   const {update} = useContext(MainContext);
 
   const loadMedia = async () => {
-    try {
-      const listJson = await doFetch(baseUrl + 'tags/' + appIdentifier);
-      let media = await Promise.all(
-        listJson.map(async (item) => {
-          const fileJson = await doFetch(baseUrl + 'media/' + item.file_id);
-          return fileJson;
-        })
-      );
-      if (myFilesOnly) {
-        media = media.filter((item) => item.user_id === userId);
+    if (!onlyFavorites) {
+      try {
+        const listJson = await doFetch(baseUrl + 'tags/' + appIdentifier);
+        let media = await Promise.all(
+          listJson.map(async (item) => {
+            const fileJson = await doFetch(baseUrl + 'media/' + item.file_id);
+            return fileJson;
+          })
+        );
+        if (myFilesOnly) {
+          media = media.filter((item) => item.user_id === userId);
+        }
+        setMediaArray(media);
+      } catch (error) {
+        console.error('loadMedia error', error.message);
       }
-      setMediaArray(media);
-    } catch (error) {
-      console.error('loadMedia error', error.message);
+    } else {
+      try {
+        const userToken = await AsyncStorage.getItem('userToken');
+        const options = {
+          method: 'GET',
+          headers: {'x-access-token': userToken},
+        };
+        const listJson = await doFetch(baseUrl + 'favourites', options);
+        let media = await Promise.all(
+          listJson.map(async (item) => {
+            const fileJson = await doFetch(baseUrl + 'media/' + item.file_id);
+            return fileJson;
+          })
+        );
+        setMediaArray(media);
+      } catch (error) {
+        console.error('loadMedia error', error.message);
+      }
     }
   };
   useEffect(() => {
@@ -48,6 +69,7 @@ const useLoadMedia = (myFilesOnly, userId) => {
 
 const useLoadComments = (fileId) => {
   const [commentArray, setCommentArray] = useState([]);
+  const {update} = useContext(MainContext);
   const loadComments = async () => {
     try {
       console.log('fileId: ', fileId);
@@ -59,7 +81,7 @@ const useLoadComments = (fileId) => {
   };
   useEffect(() => {
     loadComments();
-  }, []);
+  }, [update]);
   return commentArray;
 };
 
@@ -215,15 +237,15 @@ const useMedia = () => {
 };
 
 const useComment = () => {
-  const uploadComment = async (fd, token) => {
-    console.log('trying to comment', fd);
+  const uploadComment = async (info, token) => {
+    console.log('trying to comment', info);
     const options = {
       method: 'POST',
       headers: {
         'x-access-token': token,
         'Content-type': 'application/json',
       },
-      body: JSON.stringify(fd),
+      body: JSON.stringify(info),
     };
     console.log('apihooks uploadComment', options);
     try {

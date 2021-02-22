@@ -18,11 +18,13 @@ import * as ScreenOrientation from 'expo-screen-orientation';
 import {ScrollView} from 'react-native-gesture-handler';
 import CommentList from '../components/CommentList';
 import FloatingActionButton from '../components/FloatingActionButton';
+import FavoriteButton from '../components/FavoriteButton';
 import useCommentForm from '../hooks/CommentHooks';
 import {MainContext} from '../contexts/MainContext';
 
 const Single = ({route}) => {
   const {file} = route.params;
+  console.log(file);
   const allData = JSON.parse(file.description);
   const {description, price, location} = allData;
   const [avatar, setAvatar] = useState('http://placekitten.com/100');
@@ -37,32 +39,29 @@ const Single = ({route}) => {
   const {handleInputChange, inputs, commentErrors} = useCommentForm();
 
   const doCommentUpload = async () => {
-    const formData = new FormData();
-    // add text to formData
-    // formData.append('file_id', file.file_id);
-    // formData.append('comment', inputs);
-
     try {
-      console.log(inputs.comment);
-      // setIsUploading(true);
       const userToken = await AsyncStorage.getItem('userToken');
       const commentInfo = {comment: inputs.comment, file_id: file.file_id};
       const resp = await uploadComment(commentInfo, userToken);
       console.log('upload response', resp);
+      setUpdate(update + 1);
+      toggleOverlay();
 
-      Alert.alert(
+      /* Alert.alert(
         'Comment',
         'Comment uploaded',
         [
           {
             text: 'Ok',
             onPress: () => {
+              setUpdate(update + 1);
               toggleOverlay();
+              console.log(update);
             },
           },
         ],
         {cancelable: false}
-      );
+      ); */
     } catch (error) {
       Alert.alert('Upload', 'Failed');
       console.error(error);
@@ -190,6 +189,7 @@ const Single = ({route}) => {
         </Card>
       </ScrollView>
       <FloatingActionButton toggleOverlay={toggleOverlay} />
+      <FavoriteButton />
       {overlayVisible && (
         <>
           <Overlay
