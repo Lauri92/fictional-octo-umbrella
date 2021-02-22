@@ -8,7 +8,6 @@ import moment from 'moment';
 const CommentListItem = ({singleComment}) => {
   const {getUser} = useUser();
   const [owner, setOwner] = useState({});
-  console.log('singleComment: ', singleComment);
 
   const fetchOwner = async () => {
     try {

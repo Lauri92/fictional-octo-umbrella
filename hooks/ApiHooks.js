@@ -214,4 +214,35 @@ const useMedia = () => {
   return {upload, updateFile, deleteFile};
 };
 
-export {useLoadMedia, useLoadComments, useLogin, useUser, useTag, useMedia};
+const useComment = () => {
+  const uploadComment = async (fd, token) => {
+    console.log('trying to comment', fd);
+    const options = {
+      method: 'POST',
+      headers: {
+        'x-access-token': token,
+        'Content-type': 'application/json',
+      },
+      body: JSON.stringify(fd),
+    };
+    console.log('apihooks uploadComment', options);
+    try {
+      const json = await doFetch(baseUrl + 'comments', options);
+      return json;
+    } catch (e) {
+      throw new Error(e.message);
+    }
+  };
+
+  return {uploadComment};
+};
+
+export {
+  useLoadMedia,
+  useLoadComments,
+  useLogin,
+  useUser,
+  useTag,
+  useMedia,
+  useComment,
+};

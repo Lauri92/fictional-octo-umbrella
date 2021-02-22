@@ -1,16 +1,25 @@
-import React, {useEffect, useState} from 'react';
-import {StyleSheet, ActivityIndicator} from 'react-native';
+import React, {useEffect, useState, useContext} from 'react';
+import {
+  StyleSheet,
+  ActivityIndicator,
+  TextInput,
+  View,
+  Button,
+  Alert,
+} from 'react-native';
 import PropTypes from 'prop-types';
 import {uploadsUrl} from '../utils/variables';
-import {Avatar, Card, ListItem, Text} from 'react-native-elements';
+import {Avatar, Card, ListItem, Text, Overlay} from 'react-native-elements';
 import moment from 'moment';
-import {useTag, useUser} from '../hooks/ApiHooks';
+import {useTag, useUser, useComment} from '../hooks/ApiHooks';
 import {Video} from 'expo-av';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as ScreenOrientation from 'expo-screen-orientation';
 import {ScrollView} from 'react-native-gesture-handler';
 import CommentList from '../components/CommentList';
 import FloatingActionButton from '../components/FloatingActionButton';
+import useCommentForm from '../hooks/CommentHooks';
+import {MainContext} from '../contexts/MainContext';
 
 const Single = ({route}) => {
   const {file} = route.params;
@@ -20,7 +29,51 @@ const Single = ({route}) => {
   const [owner, setOwner] = useState({username: 'somebody'});
   const {getFilesByTag} = useTag();
   const {getUser} = useUser();
+  const {uploadComment} = useComment();
+  const {update, setUpdate} = useContext(MainContext);
   const [videoRef, setVideoRef] = useState(null);
+  const [overlayVisible, setOverlayVisible] = useState(false);
+
+  const {handleInputChange, inputs, commentErrors} = useCommentForm();
+
+  const doCommentUpload = async () => {
+    const formData = new FormData();
+    // add text to formData
+    // formData.append('file_id', file.file_id);
+    // formData.append('comment', inputs);
+
+    try {
+      console.log(inputs.comment);
+      // setIsUploading(true);
+      const userToken = await AsyncStorage.getItem('userToken');
+      const commentInfo = {comment: inputs.comment, file_id: file.file_id};
+      const resp = await uploadComment(commentInfo, userToken);
+      console.log('upload response', resp);
+
+      Alert.alert(
+        'Comment',
+        'Comment uploaded',
+        [
+          {
+            text: 'Ok',
+            onPress: () => {
+              toggleOverlay();
+            },
+          },
+        ],
+        {cancelable: false}
+      );
+    } catch (error) {
+      Alert.alert('Upload', 'Failed');
+      console.error(error);
+    } finally {
+      // setIsUploading(false);
+    }
+  };
+
+  const toggleOverlay = () => {
+    setOverlayVisible(!overlayVisible);
+  };
 
   const fetchAvatar = async () => {
     try {
@@ -136,7 +189,34 @@ const Single = ({route}) => {
           <CommentList file={file} />
         </Card>
       </ScrollView>
-      <FloatingActionButton />
+      <FloatingActionButton toggleOverlay={toggleOverlay} />
+      {overlayVisible && (
+        <>
+          <Overlay
+            style={styles.overlay}
+            isVisible={overlayVisible}
+            onBackdropPress={toggleOverlay}
+          >
+            <Card.Title h4>Comment this sales ad</Card.Title>
+            <TextInput
+              multiline={true}
+              numberOfLines={4}
+              maxLength={255}
+              style={styles.input}
+              onChangeText={(txt) => handleInputChange('comment', txt)}
+              errorMessage={commentErrors.comment}
+            />
+            <View style={styles.container}>
+              <Button color="#fcba03" onPress={toggleOverlay} title="Cancel" />
+              <Button
+                title="Submit"
+                onPress={doCommentUpload}
+                disabled={commentErrors.comment !== null}
+              />
+            </View>
+          </Overlay>
+        </>
+      )}
     </>
   );
 };
@@ -149,6 +229,22 @@ const styles = StyleSheet.create({
   },
   description: {
     marginBottom: 10,
+  },
+  input: {
+    height: 200,
+    width: 250,
+    borderColor: 'gray',
+    borderWidth: 1,
+    textAlignVertical: 'top',
+    marginBottom: 25,
+  },
+  container: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-around',
+  },
+  cancelButton: {
+    color: '#841584',
   },
 });
 
