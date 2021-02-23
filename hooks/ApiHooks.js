@@ -49,7 +49,7 @@ const useLoadMedia = (myFilesOnly, userId, onlyFavorites) => {
           headers: {'x-access-token': userToken},
         };
         const listJson = await doFetch(baseUrl + 'favourites', options);
-        let media = await Promise.all(
+        const media = await Promise.all(
           listJson.map(async (item) => {
             const fileJson = await doFetch(baseUrl + 'media/' + item.file_id);
             return fileJson;

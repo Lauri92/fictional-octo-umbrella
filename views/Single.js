@@ -41,8 +41,9 @@ const Single = ({route}) => {
   const {description, price, location} = allData;
   const [avatar, setAvatar] = useState('http://placekitten.com/100');
   const [owner, setOwner] = useState({username: 'somebody'});
+  const [isLoggedUser, setIsLoggedUser] = useState(true);
   const {getFilesByTag} = useTag();
-  const {getUser} = useUser();
+  const {getUser, checkToken} = useUser();
   const {uploadComment} = useComment();
   const {createFavourite, deleteFavourite} = useFavourites();
   const {update, setUpdate} = useContext(MainContext);
@@ -119,6 +120,18 @@ const Single = ({route}) => {
     }
   };
 
+  const fetchLoggedUser = async () => {
+    try {
+      const userToken = await AsyncStorage.getItem('userToken');
+      const userData = await checkToken(userToken);
+      const isUser = userData.user_id === file.user_id ? true : false;
+      console.log(isUser);
+      setIsLoggedUser(isUser);
+    } catch (error) {
+      console.error(error.message);
+    }
+  };
+
   const unlock = async () => {
     try {
       await ScreenOrientation.unlockAsync();
@@ -153,6 +166,7 @@ const Single = ({route}) => {
     unlock();
     fetchAvatar();
     fetchOwner();
+    fetchLoggedUser();
 
     const orientSub = ScreenOrientation.addOrientationChangeListener((evt) => {
       console.log('orientation', evt);
@@ -216,13 +230,14 @@ const Single = ({route}) => {
         buttonInteraction={toggleOverlay}
         icon={'comment'}
       />
-      {isFavourite ? (
+      {isFavourite && !isLoggedUser && (
         <FavoriteButton
           buttonInteraction={removeFavourite}
           icon={'star'}
           color={'#ffff00'}
         />
-      ) : (
+      )}
+      {!isFavourite && !isLoggedUser && (
         <FavoriteButton
           buttonInteraction={postFavourite}
           icon={'star'}
@@ -230,31 +245,29 @@ const Single = ({route}) => {
         />
       )}
       {overlayVisible && (
-        <>
-          <Overlay
-            style={styles.overlay}
-            isVisible={overlayVisible}
-            onBackdropPress={toggleOverlay}
-          >
-            <Card.Title h4>Comment this sales ad</Card.Title>
-            <TextInput
-              multiline={true}
-              numberOfLines={4}
-              maxLength={255}
-              style={styles.input}
-              onChangeText={(txt) => handleInputChange('comment', txt)}
-              errorMessage={commentErrors.comment}
+        <Overlay
+          style={styles.overlay}
+          isVisible={overlayVisible}
+          onBackdropPress={toggleOverlay}
+        >
+          <Card.Title h4>Comment this sales ad</Card.Title>
+          <TextInput
+            multiline={true}
+            numberOfLines={4}
+            maxLength={255}
+            style={styles.input}
+            onChangeText={(txt) => handleInputChange('comment', txt)}
+            errorMessage={commentErrors.comment}
+          />
+          <View style={styles.container}>
+            <Button color="#fcba03" onPress={toggleOverlay} title="Cancel" />
+            <Button
+              title="Submit"
+              onPress={doCommentUpload}
+              disabled={commentErrors.comment !== null}
             />
-            <View style={styles.container}>
-              <Button color="#fcba03" onPress={toggleOverlay} title="Cancel" />
-              <Button
-                title="Submit"
-                onPress={doCommentUpload}
-                disabled={commentErrors.comment !== null}
-              />
-            </View>
-          </Overlay>
-        </>
+          </View>
+        </Overlay>
       )}
     </>
   );
