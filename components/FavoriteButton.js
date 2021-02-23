@@ -4,13 +4,13 @@ import {FAB} from 'react-native-paper';
 import PropTypes from 'prop-types';
 
 // FFFF00; -> Yellow
-const FavoriteButton = ({favoriteInteraction}) => (
+const FavoriteButton = ({buttonInteraction, icon, color}) => (
   <FAB
     style={styles.fab}
     medium
-    icon="star"
-    color="#FFF"
-    onPress={() => console.log('Do something with this button!')}
+    icon={icon}
+    color={color}
+    onPress={() => buttonInteraction()}
   />
 );
 
@@ -24,7 +24,9 @@ const styles = StyleSheet.create({
 });
 
 FavoriteButton.propTypes = {
-  favoriteInteraction: PropTypes.func,
+  buttonInteraction: PropTypes.func,
+  icon: PropTypes.string,
+  color: PropTypes.string,
 };
 
 export default FavoriteButton;

@@ -1,6 +1,6 @@
 import React, {useContext, useState, useEffect} from 'react';
 import PropTypes from 'prop-types';
-import {Avatar, ListItem as RNEListItem} from 'react-native-elements';
+import {Avatar, Icon, ListItem as RNEListItem} from 'react-native-elements';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useUser, useComment} from '../hooks/ApiHooks';
 import moment from 'moment';
@@ -58,14 +58,19 @@ const CommentListItem = ({singleComment}) => {
     <RNEListItem bottomDivider>
       <RNEListItem.Content>
         <RNEListItem.Title h4>{owner.username}</RNEListItem.Title>
-        {owner.user_id === loggedUser.user_id && (
-          <Button title="Delete" color="red" onPress={doCommentDelete}></Button>
-        )}
         <RNEListItem.Subtitle>{singleComment.comment}</RNEListItem.Subtitle>
         <RNEListItem.Subtitle>{owner.email}</RNEListItem.Subtitle>
         <RNEListItem.Subtitle>
           {moment(singleComment.time_added).format('LLLL')}
         </RNEListItem.Subtitle>
+        {owner.user_id === loggedUser.user_id && (
+          <Icon
+            name="delete"
+            type="material"
+            color="#517fa4"
+            onPress={doCommentDelete}
+          />
+        )}
       </RNEListItem.Content>
     </RNEListItem>
   );

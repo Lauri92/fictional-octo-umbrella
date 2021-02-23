@@ -11,7 +11,14 @@ import PropTypes from 'prop-types';
 import {uploadsUrl} from '../utils/variables';
 import {Avatar, Card, ListItem, Text, Overlay} from 'react-native-elements';
 import moment from 'moment';
-import {useTag, useUser, useComment} from '../hooks/ApiHooks';
+import {
+  useTag,
+  useUser,
+  useComment,
+  useFavourites,
+  useLoadComments,
+  useLoadFavourites,
+} from '../hooks/ApiHooks';
 import {Video} from 'expo-av';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as ScreenOrientation from 'expo-screen-orientation';
@@ -24,6 +31,12 @@ import {MainContext} from '../contexts/MainContext';
 
 const Single = ({route}) => {
   const {file} = route.params;
+  const commentArray = useLoadComments(file.file_id);
+  const favouritesArray = useLoadFavourites();
+  const checkFavourite = favouritesArray.filter(
+    (item) => item.file_id === file.file_id
+  );
+  const isFavourite = checkFavourite.length > 0 ? true : false;
   const allData = JSON.parse(file.description);
   const {description, price, location} = allData;
   const [avatar, setAvatar] = useState('http://placekitten.com/100');
@@ -31,6 +44,7 @@ const Single = ({route}) => {
   const {getFilesByTag} = useTag();
   const {getUser} = useUser();
   const {uploadComment} = useComment();
+  const {createFavourite, deleteFavourite} = useFavourites();
   const {update, setUpdate} = useContext(MainContext);
   const [videoRef, setVideoRef] = useState(null);
   const [overlayVisible, setOverlayVisible] = useState(false);
@@ -71,6 +85,18 @@ const Single = ({route}) => {
 
   const toggleOverlay = () => {
     setOverlayVisible(!overlayVisible);
+  };
+
+  const postFavourite = () => {
+    console.log('Create favorite here!');
+    createFavourite({file_id: file.file_id});
+    setUpdate(update + 1);
+  };
+
+  const removeFavourite = () => {
+    console.log('Remove favorite here!');
+    deleteFavourite(file.file_id);
+    setUpdate(update + 1);
   };
 
   const fetchAvatar = async () => {
@@ -183,12 +209,26 @@ const Single = ({route}) => {
           <Card.Divider />
         </Card>
         <Card>
-          <Card.Title h2>Comments</Card.Title>
-          <CommentList file={file} />
+          <CommentList file={file} commentArray={commentArray} />
         </Card>
       </ScrollView>
-      <FloatingActionButton toggleOverlay={toggleOverlay} />
-      <FavoriteButton />
+      <FloatingActionButton
+        buttonInteraction={toggleOverlay}
+        icon={'comment'}
+      />
+      {isFavourite ? (
+        <FavoriteButton
+          buttonInteraction={removeFavourite}
+          icon={'star'}
+          color={'#ffff00'}
+        />
+      ) : (
+        <FavoriteButton
+          buttonInteraction={postFavourite}
+          icon={'star'}
+          color={'#fff'}
+        />
+      )}
       {overlayVisible && (
         <>
           <Overlay

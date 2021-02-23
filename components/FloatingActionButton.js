@@ -3,12 +3,12 @@ import {StyleSheet} from 'react-native';
 import {FAB} from 'react-native-paper';
 import PropTypes from 'prop-types';
 
-const FloatingActionButton = ({toggleOverlay}) => (
+const FloatingActionButton = ({buttonInteraction, icon}) => (
   <FAB
     style={styles.fab}
     medium
-    icon="comment"
-    onPress={() => toggleOverlay()}
+    icon={icon}
+    onPress={() => buttonInteraction()}
   />
 );
 
@@ -22,7 +22,8 @@ const styles = StyleSheet.create({
 });
 
 FloatingActionButton.propTypes = {
-  toggleOverlay: PropTypes.func,
+  buttonInteraction: PropTypes.func,
+  icon: PropTypes.string,
 };
 
 export default FloatingActionButton;

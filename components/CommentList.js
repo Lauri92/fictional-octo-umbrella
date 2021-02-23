@@ -4,9 +4,9 @@ import PropTypes from 'prop-types';
 import CommentListItem from './CommentListItem';
 import {useLoadComments} from '../hooks/ApiHooks';
 
-const CommentList = ({file}) => {
+const CommentList = ({file, commentArray}) => {
   const fileId = file.file_id;
-  const commentArray = useLoadComments(fileId);
+  // const commentArray = useLoadComments(fileId);
 
   return (
     <FlatList
@@ -19,6 +19,7 @@ const CommentList = ({file}) => {
 
 CommentList.propTypes = {
   file: PropTypes.object,
+  commentArray: PropTypes.array,
 };
 
 export default CommentList;

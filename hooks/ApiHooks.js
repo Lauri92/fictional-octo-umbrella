@@ -72,7 +72,7 @@ const useLoadComments = (fileId) => {
   const {update} = useContext(MainContext);
   const loadComments = async () => {
     try {
-      console.log('fileId: ', fileId);
+      console.log('Loading comments of file: ', fileId);
       const comments = await doFetch(baseUrl + 'comments/file/' + fileId);
       setCommentArray(comments);
     } catch (error) {
@@ -83,6 +83,29 @@ const useLoadComments = (fileId) => {
     loadComments();
   }, [update]);
   return commentArray;
+};
+
+const useLoadFavourites = () => {
+  const [favouriteArray, setFavouriteArray] = useState([]);
+  const {update} = useContext(MainContext);
+  const loadFavourites = async () => {
+    try {
+      const userToken = await AsyncStorage.getItem('userToken');
+      const options = {
+        method: 'GET',
+        headers: {'x-access-token': userToken},
+      };
+      const favourites = await doFetch(baseUrl + 'favourites', options);
+      setFavouriteArray(favourites);
+      console.log('FavouriteArray', favourites);
+    } catch (error) {
+      console.error('loadFavorites error', error.message);
+    }
+  };
+  useEffect(() => {
+    loadFavourites();
+  }, [update]);
+  return favouriteArray;
 };
 
 const useLogin = () => {
@@ -274,12 +297,57 @@ const useComment = () => {
   return {uploadComment, deleteComment};
 };
 
+const useFavourites = () => {
+  const createFavourite = async (fileId) => {
+    console.log('Creating favorite', fileId);
+    const userToken = await AsyncStorage.getItem('userToken');
+    const options = {
+      method: 'POST',
+      headers: {
+        'x-access-token': userToken,
+        'Content-type': 'application/json',
+      },
+      body: JSON.stringify(fileId),
+    };
+    try {
+      const json = await doFetch(baseUrl + 'favourites', options);
+      return json;
+    } catch (e) {
+      throw new Error(e.message);
+    }
+  };
+
+  const deleteFavourite = async (fileId) => {
+    console.log('Creating favorite', fileId);
+    const userToken = await AsyncStorage.getItem('userToken');
+    const options = {
+      method: 'DELETE',
+      headers: {
+        'x-access-token': userToken,
+      },
+    };
+    try {
+      const json = await doFetch(
+        baseUrl + 'favourites/file/' + fileId,
+        options
+      );
+      return json;
+    } catch (e) {
+      throw new Error(e.message);
+    }
+  };
+
+  return {createFavourite, deleteFavourite};
+};
+
 export {
   useLoadMedia,
   useLoadComments,
+  useLoadFavourites,
   useLogin,
   useUser,
   useTag,
   useMedia,
   useComment,
+  useFavourites,
 };
