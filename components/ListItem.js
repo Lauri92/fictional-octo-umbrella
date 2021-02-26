@@ -9,12 +9,12 @@ import {MainContext} from '../contexts/MainContext';
 import {Alert} from 'react-native';
 
 const ListItem = ({navigation, singleMedia, isMyFile}) => {
-  const allData = JSON.parse(singleMedia.description);
-  const {description, price, location, category} = allData;
+  const {
+    description: {category, description, location, price},
+  } = singleMedia;
 
   const {deleteFile} = useMedia();
   const {setUpdate, update} = useContext(MainContext);
-  // console.log(singleMedia);
 
   const doDelete = () => {
     Alert.alert(

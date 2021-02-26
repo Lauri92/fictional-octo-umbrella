@@ -184,11 +184,6 @@ const Upload = ({navigation}) => {
                 icon: () => <Icon name="flag" size={18} color="#000" />,
               },
               {
-                label: 'Handmade',
-                value: 'handmade',
-                icon: () => <Icon name="flag" size={18} color="#ff0000" />,
-              },
-              {
                 label: 'Vehicles and Machinery',
                 value: 'vehicles and machinery',
                 icon: () => <Icon name="flag" size={18} color="#FFFF00" />,

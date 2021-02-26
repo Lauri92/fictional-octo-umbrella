@@ -19,16 +19,11 @@ import useSearchForm from '../hooks/SearchHooks';
 
 const Items = ({navigation}) => {
   const {handleInputChange, inputs, userInputErrors} = useSearchForm();
-  const [searchContent, setsearchContent] = useState('');
+  const [searchContent, setsearchContent] = useState('emptylist!');
   const {update, setUpdate} = useContext(MainContext);
 
   const userInputSearch = async () => {
     setsearchContent(inputs.userInput);
-    setUpdate(update + 1);
-  };
-
-  const allSearch = async () => {
-    setsearchContent('');
     setUpdate(update + 1);
   };
 
@@ -44,12 +39,6 @@ const Items = ({navigation}) => {
           style={styles.input}
         />
         <Button
-          style={styles.allButton}
-          color={'#000000'}
-          title="All"
-          onPress={allSearch}
-        />
-        <Button
           style={styles.searchButton}
           disabled={userInputErrors.userInput !== null}
           color={'#000000'}
@@ -60,34 +49,42 @@ const Items = ({navigation}) => {
       <DropDownPicker
         items={[
           {
-            label: 'Electronics',
-            value: 'electronics',
+            label: 'All',
+            value: '',
             icon: () => <Icon name="flag" size={18} color="#000" />,
           },
           {
-            label: 'Handmade',
-            value: 'handmade',
-            icon: () => <Icon name="flag" size={18} color="#ff0000" />,
+            label: 'Electronics',
+            value: 'electronics',
+            icon: () => <Icon name="dns" size={18} color="#000" />,
           },
           {
             label: 'Vehicles and Machinery',
             value: 'vehicles and machinery',
-            icon: () => <Icon name="flag" size={18} color="#FFFF00" />,
+            icon: () => (
+              <Icon type="antdesign" name="car" size={18} color="#000" />
+            ),
           },
           {
             label: 'Home and Living',
             value: 'home and living',
-            icon: () => <Icon name="flag" size={18} color="#00ff00" />,
+            icon: () => (
+              <Icon type="antdesign" name="home" size={18} color="#000" />
+            ),
           },
           {
             label: 'Leisure and Hobbies',
             value: 'leisure and hobbies',
-            icon: () => <Icon name="flag" size={18} color="#00ff00" />,
+            icon: () => (
+              <Icon type="antdesign" name="rocket1" size={18} color="#000" />
+            ),
           },
           {
             label: 'Miscellaneous',
             value: 'miscellaneous',
-            icon: () => <Icon name="flag" size={18} color="#00ff00" />,
+            icon: () => (
+              <Icon type="antdesign" name="bars" size={18} color="#000" />
+            ),
           },
         ]}
         placeholder="Select a category"
@@ -139,7 +136,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     marginLeft: 17,
     marginRight: 0,
-    width: 225,
+    width: 275,
   },
   allButton: {
     marginRight: 50,

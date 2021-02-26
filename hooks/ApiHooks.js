@@ -42,6 +42,17 @@ const useLoadMedia = (
         if (myFilesOnly) {
           media = media.filter((item) => item.user_id === userId);
         }
+        media = media.map((item) => {
+          const parsed = JSON.parse(item.description);
+          const objToPass = {
+            category: parsed.category,
+            description: parsed.description,
+            location: parsed.location,
+            price: parsed.price,
+          };
+          item.description = objToPass;
+          return item;
+        });
         setMediaArray(media);
       } catch (error) {
         console.error('loadMedia error', error.message);
@@ -54,12 +65,23 @@ const useLoadMedia = (
           headers: {'x-access-token': userToken},
         };
         const listJson = await doFetch(baseUrl + 'favourites', options);
-        const media = await Promise.all(
+        let media = await Promise.all(
           listJson.map(async (item) => {
             const fileJson = await doFetch(baseUrl + 'media/' + item.file_id);
             return fileJson;
           })
         );
+        media = media.map((item) => {
+          const parsed = JSON.parse(item.description);
+          const objToPass = {
+            category: parsed.category,
+            description: parsed.description,
+            location: parsed.location,
+            price: parsed.price,
+          };
+          item.description = objToPass;
+          return item;
+        });
         setMediaArray(media);
       } catch (error) {
         console.error('loadMedia error', error.message);
@@ -74,10 +96,40 @@ const useLoadMedia = (
             return fileJson;
           })
         );
-        media = media.filter((item) =>
-          item.title.toLowerCase().includes(searchContent.toLowerCase())
-        );
-        setMediaArray(media);
+        // const allData = JSON.parse(singleMedia.description);
+
+        media = media.map((item) => {
+          const parsed = JSON.parse(item.description);
+          const objToPass = {
+            category: parsed.category,
+            description: parsed.description,
+            location: parsed.location,
+            price: parsed.price,
+          };
+          item.description = objToPass;
+          return item;
+        });
+        if (
+          searchContent === 'electronics' ||
+          searchContent === 'vehicles and machinery' ||
+          searchContent === 'home and living' ||
+          searchContent === 'leisure and hobbies' ||
+          searchContent === 'miscellaneous'
+        ) {
+          media = media.filter((item) =>
+            item.description.category
+              .toLowerCase()
+              .includes(searchContent.toLowerCase())
+          );
+          setMediaArray(media);
+        } else {
+          media = media.filter((item) =>
+            item.description.description
+              .toLowerCase()
+              .includes(searchContent.toLowerCase())
+          );
+          setMediaArray(media);
+        }
       } catch (error) {
         console.error('loadMedia error', error.message);
       }

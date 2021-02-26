@@ -31,14 +31,18 @@ import {MainContext} from '../contexts/MainContext';
 
 const Single = ({route}) => {
   const {file} = route.params;
+  // console.log('file: ', file);
   const commentArray = useLoadComments(file.file_id);
   const favouritesArray = useLoadFavourites();
   const checkFavourite = favouritesArray.filter(
     (item) => item.file_id === file.file_id
   );
   const isFavourite = checkFavourite.length > 0 ? true : false;
-  const allData = JSON.parse(file.description);
-  const {description, price, location} = allData;
+  // const allData = JSON.parse(file.description);
+  // const {description, price, location} = allData;
+  const {
+    description: {category, description, location, price},
+  } = file;
   const [avatar, setAvatar] = useState('http://placekitten.com/100');
   const [owner, setOwner] = useState({username: 'somebody'});
   const [isLoggedUser, setIsLoggedUser] = useState(true);
