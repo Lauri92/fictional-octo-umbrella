@@ -1,3 +1,4 @@
+/* eslint-disable react/display-name */
 import React, {useContext, useEffect, useState} from 'react';
 import {
   ActivityIndicator,
@@ -7,7 +8,7 @@ import {
   ScrollView,
 } from 'react-native';
 import PropTypes from 'prop-types';
-import {Input, Text, Image, Button, Card} from 'react-native-elements';
+import {Input, Text, Image, Button, Card, Icon} from 'react-native-elements';
 import useUploadForm from '../hooks/UploadHooks';
 import * as ImagePicker from 'expo-image-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -15,6 +16,7 @@ import {useMedia, useTag} from '../hooks/ApiHooks';
 import {MainContext} from '../contexts/MainContext';
 import {appIdentifier} from '../utils/variables';
 import {Video} from 'expo-av';
+import DropDownPicker from 'react-native-dropdown-picker';
 
 const Upload = ({navigation}) => {
   const [image, setImage] = useState(null);
@@ -37,6 +39,7 @@ const Upload = ({navigation}) => {
       description: inputs.description,
       price: inputs.price,
       location: inputs.location,
+      category: inputs.category,
     };
 
     formData.append('description', JSON.stringify(extraData));
@@ -173,6 +176,51 @@ const Upload = ({navigation}) => {
             onChangeText={(txt) => handleInputChange('location', txt)}
             errorMessage={uploadErrors.location}
           />
+          <DropDownPicker
+            items={[
+              {
+                label: 'Electronics',
+                value: 'electronics',
+                icon: () => <Icon name="flag" size={18} color="#000" />,
+              },
+              {
+                label: 'Handmade',
+                value: 'handmade',
+                icon: () => <Icon name="flag" size={18} color="#ff0000" />,
+              },
+              {
+                label: 'Vehicles and Machinery',
+                value: 'vehicles and machinery',
+                icon: () => <Icon name="flag" size={18} color="#FFFF00" />,
+              },
+              {
+                label: 'Home and Living',
+                value: 'home and living',
+                icon: () => <Icon name="flag" size={18} color="#00ff00" />,
+              },
+              {
+                label: 'Leisure and Hobbies',
+                value: 'leisure and hobbies',
+                icon: () => <Icon name="flag" size={18} color="#00ff00" />,
+              },
+              {
+                label: 'Miscellaneous',
+                value: 'miscellaneous',
+                icon: () => <Icon name="flag" size={18} color="#00ff00" />,
+              },
+            ]}
+            value={inputs.category}
+            placeholder="Select a category"
+            containerStyle={{height: 60}}
+            style={{backgroundColor: '#FFF'}}
+            itemStyle={{
+              justifyContent: 'center',
+            }}
+            dropDownStyle={{backgroundColor: '#FFF'}}
+            onChangeItem={(item) => {
+              handleInputChange('category', item.label);
+            }}
+          />
           <Button title="Choose from library" onPress={() => pickImage(true)} />
           <Button title="Use camera" onPress={() => pickImage(false)} />
           {isUploading && <ActivityIndicator size="large" color="#0000ff" />}
@@ -184,6 +232,7 @@ const Upload = ({navigation}) => {
               uploadErrors.description !== null ||
               uploadErrors.price !== null ||
               uploadErrors.location !== null ||
+              uploadErrors.category !== null ||
               image === null
             }
           />

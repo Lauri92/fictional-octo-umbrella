@@ -10,7 +10,7 @@ import {Alert} from 'react-native';
 
 const ListItem = ({navigation, singleMedia, isMyFile}) => {
   const allData = JSON.parse(singleMedia.description);
-  const {description, price, location} = allData;
+  const {description, price, location, category} = allData;
 
   const {deleteFile} = useMedia();
   const {setUpdate, update} = useContext(MainContext);
@@ -59,6 +59,7 @@ const ListItem = ({navigation, singleMedia, isMyFile}) => {
         </RNEListItem.Subtitle>
         <RNEListItem.Subtitle>Price: {price}€</RNEListItem.Subtitle>
         <RNEListItem.Subtitle>Location: {location}</RNEListItem.Subtitle>
+        <RNEListItem.Subtitle>Category: {category}</RNEListItem.Subtitle>
         {isMyFile && (
           <>
             {/* <Button

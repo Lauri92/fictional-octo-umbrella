@@ -61,7 +61,7 @@ const Items = ({navigation}) => {
         items={[
           {
             label: 'Electronics',
-            value: 'porsche',
+            value: 'electronics',
             icon: () => <Icon name="flag" size={18} color="#000" />,
           },
           {
@@ -70,16 +70,27 @@ const Items = ({navigation}) => {
             icon: () => <Icon name="flag" size={18} color="#ff0000" />,
           },
           {
-            label: 'Vehicles',
-            value: 'vehicles',
+            label: 'Vehicles and Machinery',
+            value: 'vehicles and machinery',
             icon: () => <Icon name="flag" size={18} color="#FFFF00" />,
           },
           {
-            label: 'Machinery',
-            value: 'machinery',
+            label: 'Home and Living',
+            value: 'home and living',
+            icon: () => <Icon name="flag" size={18} color="#00ff00" />,
+          },
+          {
+            label: 'Leisure and Hobbies',
+            value: 'leisure and hobbies',
+            icon: () => <Icon name="flag" size={18} color="#00ff00" />,
+          },
+          {
+            label: 'Miscellaneous',
+            value: 'miscellaneous',
             icon: () => <Icon name="flag" size={18} color="#00ff00" />,
           },
         ]}
+        placeholder="Select a category"
         containerStyle={{height: 60}}
         style={{backgroundColor: '#FFF'}}
         itemStyle={{

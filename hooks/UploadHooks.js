@@ -41,6 +41,11 @@ const constraints = {
       message: 'min length is 3 characters',
     },
   },
+  category: {
+    presence: {
+      message: 'cannot be empty',
+    },
+  },
 };
 
 const useUploadForm = (callback) => {
@@ -49,12 +54,13 @@ const useUploadForm = (callback) => {
     description: '',
     price: '',
     location: '',
+    category: '',
   });
   const [uploadErrors, setUploadErrors] = useState({});
 
   const handleInputChange = (name, text) => {
-    // console.log(name, text);
-    // console.log('inputs state', inputs);
+    console.log(name, text);
+    console.log('inputs state', inputs);
     setInputs((inputs) => {
       return {
         ...inputs,
