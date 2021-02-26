@@ -235,6 +235,7 @@ const Single = ({route}) => {
           buttonInteraction={removeFavourite}
           icon={'star'}
           color={'#ffff00'}
+          bottom={65}
         />
       )}
       {!isFavourite && !isLoggedUser && (
@@ -242,6 +243,7 @@ const Single = ({route}) => {
           buttonInteraction={postFavourite}
           icon={'star'}
           color={'#fff'}
+          bottom={65}
         />
       )}
       {overlayVisible && (
@@ -251,6 +253,7 @@ const Single = ({route}) => {
           onBackdropPress={toggleOverlay}
         >
           <Card.Title h4>Comment this sales ad</Card.Title>
+          <Text>Min. 15 characters</Text>
           <TextInput
             multiline={true}
             numberOfLines={4}

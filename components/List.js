@@ -5,9 +5,14 @@ import ListItem from './ListItem';
 import PropTypes from 'prop-types';
 import {MainContext} from '../contexts/MainContext';
 
-const List = ({navigation, myFilesOnly, onlyFavorites}) => {
+const List = ({navigation, myFilesOnly, onlyFavorites, searchContent}) => {
   const {user} = useContext(MainContext);
-  const mediaArray = useLoadMedia(myFilesOnly, user.user_id, onlyFavorites);
+  const mediaArray = useLoadMedia(
+    myFilesOnly,
+    user.user_id,
+    onlyFavorites,
+    searchContent
+  );
 
   return (
     <FlatList
@@ -28,6 +33,7 @@ List.propTypes = {
   navigation: PropTypes.object,
   myFilesOnly: PropTypes.bool,
   onlyFavorites: PropTypes.bool,
+  searchContent: PropTypes.string,
 };
 
 export default List;

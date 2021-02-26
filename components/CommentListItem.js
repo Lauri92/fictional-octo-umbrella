@@ -1,10 +1,10 @@
 import React, {useContext, useState, useEffect} from 'react';
 import PropTypes from 'prop-types';
-import {Avatar, Icon, ListItem as RNEListItem} from 'react-native-elements';
+import {Icon, ListItem as RNEListItem} from 'react-native-elements';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useUser, useComment} from '../hooks/ApiHooks';
 import moment from 'moment';
-import {Alert, Button} from 'react-native';
+import {Alert} from 'react-native';
 import {MainContext} from '../contexts/MainContext';
 
 const CommentListItem = ({singleComment}) => {

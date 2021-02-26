@@ -20,12 +20,18 @@ const doFetch = async (url, options = {}) => {
   }
 };
 
-const useLoadMedia = (myFilesOnly, userId, onlyFavorites) => {
+const useLoadMedia = (
+  myFilesOnly,
+  userId,
+  onlyFavorites,
+  searchContent = ''
+) => {
   const [mediaArray, setMediaArray] = useState([]);
   const {update} = useContext(MainContext);
-
+  console.log('useLoadMedia searchContent: ', searchContent);
   const loadMedia = async () => {
-    if (!onlyFavorites) {
+    if (!onlyFavorites && searchContent === '') {
+      console.log('here');
       try {
         const listJson = await doFetch(baseUrl + 'tags/' + appIdentifier);
         let media = await Promise.all(
@@ -37,11 +43,14 @@ const useLoadMedia = (myFilesOnly, userId, onlyFavorites) => {
         if (myFilesOnly) {
           media = media.filter((item) => item.user_id === userId);
         }
+        /* media = media.filter((item) =>
+          item.title.toLowerCase().includes('porsche')
+        ); */
         setMediaArray(media);
       } catch (error) {
         console.error('loadMedia error', error.message);
       }
-    } else {
+    } else if (onlyFavorites) {
       try {
         const userToken = await AsyncStorage.getItem('userToken');
         const options = {
@@ -54,6 +63,23 @@ const useLoadMedia = (myFilesOnly, userId, onlyFavorites) => {
             const fileJson = await doFetch(baseUrl + 'media/' + item.file_id);
             return fileJson;
           })
+        );
+        setMediaArray(media);
+      } catch (error) {
+        console.error('loadMedia error', error.message);
+      }
+    } else if (searchContent !== '') {
+      try {
+        console.log('Has search content!');
+        const listJson = await doFetch(baseUrl + 'tags/' + appIdentifier);
+        let media = await Promise.all(
+          listJson.map(async (item) => {
+            const fileJson = await doFetch(baseUrl + 'media/' + item.file_id);
+            return fileJson;
+          })
+        );
+        media = media.filter((item) =>
+          item.title.toLowerCase().includes(searchContent)
         );
         setMediaArray(media);
       } catch (error) {
