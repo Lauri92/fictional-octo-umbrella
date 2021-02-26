@@ -28,10 +28,9 @@ const useLoadMedia = (
 ) => {
   const [mediaArray, setMediaArray] = useState([]);
   const {update} = useContext(MainContext);
-  console.log('useLoadMedia searchContent: ', searchContent);
   const loadMedia = async () => {
     if (!onlyFavorites && searchContent === '') {
-      console.log('here');
+      console.log('1 useLoadMedia searchContent: ', searchContent);
       try {
         const listJson = await doFetch(baseUrl + 'tags/' + appIdentifier);
         let media = await Promise.all(
@@ -43,9 +42,6 @@ const useLoadMedia = (
         if (myFilesOnly) {
           media = media.filter((item) => item.user_id === userId);
         }
-        /* media = media.filter((item) =>
-          item.title.toLowerCase().includes('porsche')
-        ); */
         setMediaArray(media);
       } catch (error) {
         console.error('loadMedia error', error.message);
@@ -70,7 +66,7 @@ const useLoadMedia = (
       }
     } else if (searchContent !== '') {
       try {
-        console.log('Has search content!');
+        console.log('2 useLoadMedia searchContent: ', searchContent);
         const listJson = await doFetch(baseUrl + 'tags/' + appIdentifier);
         let media = await Promise.all(
           listJson.map(async (item) => {
@@ -79,12 +75,14 @@ const useLoadMedia = (
           })
         );
         media = media.filter((item) =>
-          item.title.toLowerCase().includes(searchContent)
+          item.title.toLowerCase().includes(searchContent.toLowerCase())
         );
         setMediaArray(media);
       } catch (error) {
         console.error('loadMedia error', error.message);
       }
+    } else {
+      console.log('No fetch.');
     }
   };
   useEffect(() => {

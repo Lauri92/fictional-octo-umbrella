@@ -1,3 +1,4 @@
+/* eslint-disable react/display-name */
 import React, {useState, useContext} from 'react';
 import {
   SafeAreaView,
@@ -8,10 +9,11 @@ import {
   Button,
   Alert,
 } from 'react-native';
+import {Icon} from 'react-native-elements';
 import List from '../components/List';
 import GlobalStyles from '../utils/GlobalStyles';
 import PropTypes from 'prop-types';
-import FloatingActionButton from '../components/FloatingActionButton';
+import DropDownPicker from 'react-native-dropdown-picker';
 import {MainContext} from '../contexts/MainContext';
 import useSearchForm from '../hooks/SearchHooks';
 
@@ -21,15 +23,15 @@ const Items = ({navigation}) => {
   const {update, setUpdate} = useContext(MainContext);
 
   const userInputSearch = async () => {
-    try {
-      setsearchContent(inputs.userInput);
-      console.log(searchContent);
-      setUpdate(update + 1);
-    } catch (error) {
-      Alert.alert('Upload', 'Failed');
-      console.error(error);
-    }
+    setsearchContent(inputs.userInput);
+    setUpdate(update + 1);
   };
+
+  const allSearch = async () => {
+    setsearchContent('');
+    setUpdate(update + 1);
+  };
+
   return (
     <>
       <View style={styles.container}>
@@ -41,7 +43,12 @@ const Items = ({navigation}) => {
           errorMessage={userInputErrors.userInput}
           style={styles.input}
         />
-
+        <Button
+          style={styles.allButton}
+          color={'#000000'}
+          title="All"
+          onPress={allSearch}
+        />
         <Button
           style={styles.searchButton}
           disabled={userInputErrors.userInput !== null}
@@ -50,9 +57,44 @@ const Items = ({navigation}) => {
           onPress={userInputSearch}
         />
       </View>
+      <DropDownPicker
+        items={[
+          {
+            label: 'Electronics',
+            value: 'porsche',
+            icon: () => <Icon name="flag" size={18} color="#000" />,
+          },
+          {
+            label: 'Handmade',
+            value: 'handmade',
+            icon: () => <Icon name="flag" size={18} color="#ff0000" />,
+          },
+          {
+            label: 'Vehicles',
+            value: 'vehicles',
+            icon: () => <Icon name="flag" size={18} color="#FFFF00" />,
+          },
+          {
+            label: 'Machinery',
+            value: 'machinery',
+            icon: () => <Icon name="flag" size={18} color="#00ff00" />,
+          },
+        ]}
+        containerStyle={{height: 60}}
+        style={{backgroundColor: '#FFF'}}
+        itemStyle={{
+          justifyContent: 'center',
+        }}
+        dropDownStyle={{backgroundColor: '#FFF'}}
+        onChangeItem={(item) => {
+          setsearchContent(item.value);
+          setUpdate(update + 1);
+        }}
+      />
 
       <SafeAreaView style={GlobalStyles.droidSafeArea}>
         <List
+          style={styles.list}
           navigation={navigation}
           myFilesOnly={false}
           onlyFavorites={false}
@@ -65,19 +107,35 @@ const Items = ({navigation}) => {
 };
 
 const styles = StyleSheet.create({
+  buttonContainer: {
+    marginTop: 20,
+    marginBottom: -25,
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+  },
+  list: {
+    backgroundColor: '#FFF',
+  },
   container: {
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'flex-start',
     marginTop: 15,
+    marginBottom: 15,
   },
   input: {
     fontSize: 20,
     marginLeft: 17,
-    marginRight: 25,
-    width: 250,
+    marginRight: 0,
+    width: 225,
   },
-  searchButton: {},
+  allButton: {
+    marginRight: 50,
+  },
+  searchButton: {
+    marginLeft: 25,
+  },
 });
 
 Items.propTypes = {

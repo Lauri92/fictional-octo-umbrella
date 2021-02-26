@@ -229,6 +229,7 @@ const Single = ({route}) => {
       <FloatingActionButton
         buttonInteraction={toggleOverlay}
         icon={'comment'}
+        bottom={0}
       />
       {isFavourite && !isLoggedUser && (
         <FavoriteButton
