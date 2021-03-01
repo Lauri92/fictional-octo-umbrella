@@ -37,11 +37,31 @@ const useSearchForm = (callback) => {
     });
   };
 
+  const handleInputEnd = (name, text) => {
+    console.log(text);
+    // console.log(name, text);
+    // console.log('inputs state', inputs);
+    setInputs((inputs) => {
+      return {
+        ...inputs,
+        [name]: text,
+      };
+    });
+    const error = validator(name, text, constraints);
+    setuserInputErrors((userInputErrors) => {
+      return {
+        ...userInputErrors,
+        [name]: error,
+      };
+    });
+  };
+
   return {
     handleInputChange,
     inputs,
     setInputs,
     userInputErrors,
+    handleInputEnd,
   };
 };
 

@@ -4,174 +4,88 @@ import {
   ActivityIndicator,
   Alert,
   KeyboardAvoidingView,
-  Platform,
   ScrollView,
 } from 'react-native';
 import PropTypes from 'prop-types';
 import {Input, Text, Image, Button, Card, Icon} from 'react-native-elements';
 import useUploadForm from '../hooks/UploadHooks';
-import * as ImagePicker from 'expo-image-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {useMedia, useTag} from '../hooks/ApiHooks';
+import {useMedia} from '../hooks/ApiHooks';
 import {MainContext} from '../contexts/MainContext';
-import {appIdentifier} from '../utils/variables';
-import {Video} from 'expo-av';
 import DropDownPicker from 'react-native-dropdown-picker';
 
-const Upload = ({navigation}) => {
-  const [image, setImage] = useState(null);
-  const [filetype, setFiletype] = useState('');
+const Modify = ({navigation, route}) => {
+  const {file} = route.params;
   const [isUploading, setIsUploading] = useState(false);
-  const {upload} = useMedia();
-  const {postTag} = useTag();
+  const {updateFile} = useMedia();
   const {update, setUpdate} = useContext(MainContext);
 
-  const {handleInputChange, inputs, uploadErrors, reset} = useUploadForm();
+  const {
+    handleInputChange,
+    inputs,
+    setInputs,
+    uploadErrors,
+    reset,
+  } = useUploadForm();
 
-  const doUpload = async () => {
-    const formData = new FormData();
-    // add text to formData
-    formData.append('title', inputs.title);
-    // formData.append('description', inputs.description);
-    // add image to formData
-
-    const extraData = {
-      description: inputs.description,
-      price: inputs.price,
-      location: inputs.location,
-      category: inputs.category,
-    };
-
-    formData.append('description', JSON.stringify(extraData));
-
-    const filename = image.split('/').pop();
-    const match = /\.(\w+)$/.exec(filename);
-    let type = match ? `${filetype}/${match[1]}` : filetype;
-    if (type === 'image/jpg') type = 'image/jpeg';
-    formData.append('file', {
-      uri: image,
-      name: filename,
-      type: type,
-    });
+  const doUpdate = async () => {
     try {
-      console.log(formData);
       setIsUploading(true);
+
+      const extraData = {
+        description: inputs.description,
+        price: inputs.price,
+        location: inputs.location,
+        category: inputs.category,
+      };
+
+      const modifyInfo = {
+        title: inputs.title,
+        description: JSON.stringify(extraData),
+      };
+
       const userToken = await AsyncStorage.getItem('userToken');
-      const resp = await upload(formData, userToken);
-      console.log('upload response', resp);
-      const tagResponse = await postTag(
-        {
-          file_id: resp.file_id,
-          tag: appIdentifier,
-        },
-        userToken
-      );
-      console.log('posting app identifier', tagResponse);
-      Alert.alert(
-        'Upload',
-        'File uploaded',
-        [
-          {
-            text: 'Ok',
-            onPress: () => {
-              setUpdate(update + 1);
-              doReset();
-              navigation.navigate('Items');
-            },
-          },
-        ],
-        {cancelable: false}
-      );
+      const resp = await updateFile(file.file_id, modifyInfo, userToken);
+      console.log('update response', resp);
+      setUpdate(update + 1);
+      navigation.pop();
     } catch (error) {
-      Alert.alert('Upload', 'Failed');
+      Alert.alert('Update', 'Failed');
       console.error(error);
     } finally {
       setIsUploading(false);
     }
   };
 
-  useEffect(() => {
-    (async () => {
-      if (Platform.OS !== 'web') {
-        const {status} = await ImagePicker.requestCameraPermissionsAsync();
-        if (status !== 'granted') {
-          alert(
-            'Sorry, we need camera roll and camera permissions to make this work!'
-          );
-        }
-      }
-    })();
-  }, []);
-
-  const pickImage = async (library) => {
-    let result = null;
-    const options = {
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
-      allowsEditing: true,
-      aspect: [1, 1],
-      quality: 0.5,
-    };
-    if (library) {
-      result = await ImagePicker.launchImageLibraryAsync(options);
-    } else {
-      result = await ImagePicker.launchCameraAsync(options);
-    }
-
-    console.log(result);
-
-    if (!result.cancelled) {
-      // console.log('pickImage result', result);
-      setFiletype(result.type);
-      setImage(result.uri);
-    }
-  };
-
   const doReset = () => {
-    setImage(null);
     reset();
   };
   return (
     <ScrollView>
       <KeyboardAvoidingView behavior="position" enabled>
         <Card>
-          <Text h4>Upload media file</Text>
-          {image && (
-            <>
-              {filetype === 'image' ? (
-                <Image
-                  source={{uri: image}}
-                  style={{width: '100%', height: undefined, aspectRatio: 1}}
-                />
-              ) : (
-                <Video
-                  source={{uri: image}}
-                  style={{width: '100%', height: undefined, aspectRatio: 1}}
-                  useNativeControls={true}
-                />
-              )}
-            </>
-          )}
+          <Text h4>Update file info</Text>
+          {/* TODO: add similar media view than Single.js */}
           <Input
-            placeholder="title"
+            placeholder="Title"
             value={inputs.title}
             onChangeText={(txt) => handleInputChange('title', txt)}
             errorMessage={uploadErrors.title}
           />
           <Input
-            placeholder="description"
+            placeholder="Description"
             value={inputs.description}
             onChangeText={(txt) => handleInputChange('description', txt)}
             errorMessage={uploadErrors.description}
           />
           <Input
-            placeholder="price"
+            placeholder="Price"
             value={inputs.price}
             onChangeText={(txt) => handleInputChange('price', txt)}
             errorMessage={uploadErrors.price}
-            keyboardType="number-pad"
           />
           <Input
-            placeholder="location"
+            placeholder="Location"
             value={inputs.location}
             onChangeText={(txt) => handleInputChange('location', txt)}
             errorMessage={uploadErrors.location}
@@ -229,19 +143,16 @@ const Upload = ({navigation}) => {
               handleInputChange('category', item.label);
             }}
           />
-          <Button title="Choose from library" onPress={() => pickImage(true)} />
-          <Button title="Use camera" onPress={() => pickImage(false)} />
           {isUploading && <ActivityIndicator size="large" color="#0000ff" />}
           <Button
-            title="Upload file"
-            onPress={doUpload}
+            title="Update"
+            onPress={doUpdate}
             disabled={
               uploadErrors.title !== null ||
               uploadErrors.description !== null ||
               uploadErrors.price !== null ||
               uploadErrors.location !== null ||
-              uploadErrors.category !== null ||
-              image === null
+              uploadErrors.category !== null
             }
           />
           <Button title="Reset" onPress={doReset} />
@@ -251,8 +162,9 @@ const Upload = ({navigation}) => {
   );
 };
 
-Upload.propTypes = {
+Modify.propTypes = {
   navigation: PropTypes.object,
+  route: PropTypes.object,
 };
 
-export default Upload;
+export default Modify;

@@ -1,12 +1,12 @@
 import React, {useContext} from 'react';
 import PropTypes from 'prop-types';
 import {uploadsUrl} from '../utils/variables';
-import {Avatar, ListItem as RNEListItem} from 'react-native-elements';
-import {Button} from 'react-native';
+import {Icon, Avatar, ListItem as RNEListItem} from 'react-native-elements';
+import {StyleSheet, View} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useMedia} from '../hooks/ApiHooks';
 import {MainContext} from '../contexts/MainContext';
-import {Alert} from 'react-native';
+import {Alert, Button} from 'react-native';
 
 const ListItem = ({navigation, singleMedia, isMyFile}) => {
   const {
@@ -49,10 +49,26 @@ const ListItem = ({navigation, singleMedia, isMyFile}) => {
     >
       <Avatar
         size="large"
-        square
+        rounded
         source={{uri: uploadsUrl + singleMedia.thumbnails.w160}}
       ></Avatar>
       <RNEListItem.Content>
+        {isMyFile && (
+          <>
+            <Button
+              title="Modify"
+              onPress={() => navigation.push('Modify', {file: singleMedia})}
+            ></Button>
+            <View style={styles.deleteIcon}>
+              <Icon
+                name="delete"
+                type="material"
+                color="#517fa4"
+                onPress={doDelete}
+              />
+            </View>
+          </>
+        )}
         <RNEListItem.Title h4>{singleMedia.title}</RNEListItem.Title>
         <RNEListItem.Subtitle numberOfLines={3}>
           {description}
@@ -60,20 +76,17 @@ const ListItem = ({navigation, singleMedia, isMyFile}) => {
         <RNEListItem.Subtitle>Price: {price}€</RNEListItem.Subtitle>
         <RNEListItem.Subtitle>Location: {location}</RNEListItem.Subtitle>
         <RNEListItem.Subtitle>Category: {category}</RNEListItem.Subtitle>
-        {isMyFile && (
-          <>
-            {/* <Button
-              title="Modify"
-              onPress={() => navigation.push('Modify', {file: singleMedia})}
-            ></Button> */}
-            <Button title="Delete" color="red" onPress={doDelete}></Button>
-          </>
-        )}
       </RNEListItem.Content>
       <RNEListItem.Chevron />
     </RNEListItem>
   );
 };
+
+const styles = StyleSheet.create({
+  deleteIcon: {
+    right: 100,
+  },
+});
 
 ListItem.propTypes = {
   singleMedia: PropTypes.object,

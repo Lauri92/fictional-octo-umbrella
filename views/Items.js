@@ -18,7 +18,12 @@ import {MainContext} from '../contexts/MainContext';
 import useSearchForm from '../hooks/SearchHooks';
 
 const Items = ({navigation}) => {
-  const {handleInputChange, inputs, userInputErrors} = useSearchForm();
+  const {
+    handleInputChange,
+    inputs,
+    userInputErrors,
+    handleInputEnd,
+  } = useSearchForm();
   const [searchContent, setsearchContent] = useState('emptylist!');
   const {update, setUpdate} = useContext(MainContext);
 
@@ -34,7 +39,12 @@ const Items = ({navigation}) => {
           autoCapitalize="none"
           placeholder="Search for items..."
           maxLength={15}
-          onChangeText={(txt) => handleInputChange('userInput', txt)}
+          /* onChangeText={(txt) => handleInputChange('userInput', txt)} */
+          onEndEditing={(event) => {
+            // console.log('Items nativeEvent.text', event.nativeEvent.text);
+            // console.log('here');
+            handleInputEnd('userInput', event.nativeEvent.text);
+          }}
           errorMessage={userInputErrors.userInput}
           style={styles.input}
         />
@@ -42,7 +52,7 @@ const Items = ({navigation}) => {
           style={styles.searchButton}
           disabled={userInputErrors.userInput !== null}
           color={'#000000'}
-          title="Search!"
+          title="Search"
           onPress={userInputSearch}
         />
       </View>

@@ -6,6 +6,7 @@ import {
   View,
   Button,
   Alert,
+  Linking,
 } from 'react-native';
 import PropTypes from 'prop-types';
 import {uploadsUrl} from '../utils/variables';
@@ -213,18 +214,29 @@ const Single = ({route}) => {
             />
           )}
           <Card.Divider />
+          <Text style={styles.underline}>Product info {'\n'}</Text>
           <Text style={styles.description}>{description}</Text>
-          <Text style={styles.description}>{price}€</Text>
+          <Text style={styles.description}>Price: {price}€</Text>
           <Text style={styles.description}>Location: {location}</Text>
-          <ListItem>
-            <Avatar source={{uri: avatar}} />
-            <Text>
-              Posted by: {owner.username}
-              {'\n'}
-              Contact info: {owner.email}
-            </Text>
-          </ListItem>
+          {/* <ListItem> */}
+          {/* <Avatar source={{uri: avatar}} /> */}
           <Card.Divider />
+          <Text style={styles.underline}>Contact info</Text>
+          <Text>
+            {'\n'}
+            Posted by: {owner.full_name}
+          </Text>
+          <Text
+            style={styles.posterEmail}
+            onPress={() =>
+              Linking.openURL(
+                `mailto:${owner.email}?subject=${file.title}&body=`
+              )
+            }
+          >
+            Contact info: {owner.email}
+          </Text>
+          {/* </ListItem> */}
         </Card>
         <Card>
           <CommentList file={file} commentArray={commentArray} />
@@ -305,6 +317,14 @@ const styles = StyleSheet.create({
   },
   cancelButton: {
     color: '#841584',
+  },
+  underline: {
+    textDecorationLine: 'underline',
+    fontSize: 20,
+  },
+  posterEmail: {
+    textDecorationLine: 'underline',
+    color: 'blue',
   },
 });
 

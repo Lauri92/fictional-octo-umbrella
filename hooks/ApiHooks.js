@@ -303,6 +303,7 @@ const useMedia = () => {
   };
 
   const updateFile = async (fileId, fileInfo, token) => {
+    console.log('fileInfo: ', fileInfo);
     const options = {
       method: 'PUT',
       headers: {

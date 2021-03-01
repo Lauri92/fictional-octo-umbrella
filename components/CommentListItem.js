@@ -58,7 +58,11 @@ const CommentListItem = ({singleComment}) => {
     <RNEListItem bottomDivider>
       <RNEListItem.Content>
         <RNEListItem.Title h4>{owner.username}</RNEListItem.Title>
-        <RNEListItem.Subtitle>{singleComment.comment}</RNEListItem.Subtitle>
+        {owner.user_id === loggedUser.user_id ? (
+          <RNEListItem.Subtitle>{singleComment.comment}</RNEListItem.Subtitle>
+        ) : (
+          <RNEListItem.Subtitle>{singleComment.comment}</RNEListItem.Subtitle>
+        )}
         <RNEListItem.Subtitle>{owner.email}</RNEListItem.Subtitle>
         <RNEListItem.Subtitle>
           {moment(singleComment.time_added).format('LLLL')}
