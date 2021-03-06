@@ -97,13 +97,12 @@ const Items = ({navigation}) => {
             ),
           },
         ]}
+        style={styles.dropDown}
         placeholder="Select a category"
         containerStyle={{height: 60}}
-        style={{backgroundColor: '#FFF'}}
         itemStyle={{
           justifyContent: 'center',
         }}
-        dropDownStyle={{backgroundColor: '#FFF'}}
         onChangeItem={(item) => {
           setsearchContent(item.value);
           setUpdate(update + 1);
@@ -111,14 +110,15 @@ const Items = ({navigation}) => {
       />
 
       <SafeAreaView style={GlobalStyles.droidSafeArea}>
-        <List
-          style={styles.list}
-          navigation={navigation}
-          myFilesOnly={false}
-          onlyFavorites={false}
-          searchContent={searchContent}
-        />
-        <StatusBar style="auto" />
+        <View style={styles.list}>
+          <List
+            navigation={navigation}
+            myFilesOnly={false}
+            onlyFavorites={false}
+            searchContent={searchContent}
+          />
+          <StatusBar style="auto" />
+        </View>
       </SafeAreaView>
     </>
   );
@@ -133,7 +133,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
   },
   list: {
-    backgroundColor: '#FFF',
+    backgroundColor: '#FFFF00',
+    marginTop: -25,
   },
   container: {
     display: 'flex',
@@ -153,6 +154,10 @@ const styles = StyleSheet.create({
   },
   searchButton: {
     marginLeft: 25,
+  },
+  dropDown: {
+    backgroundColor: '#FFF',
+    marginBottom: 0,
   },
 });
 

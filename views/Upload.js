@@ -6,6 +6,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
+  StyleSheet,
 } from 'react-native';
 import PropTypes from 'prop-types';
 import {Input, Text, Image, Button, Card, Icon} from 'react-native-elements';
@@ -177,6 +178,7 @@ const Upload = ({navigation}) => {
             errorMessage={uploadErrors.location}
           />
           <DropDownPicker
+            style={styles.dropDown}
             items={[
               {
                 label: 'Electronics',
@@ -220,7 +222,7 @@ const Upload = ({navigation}) => {
             value={inputs.category}
             placeholder="Select a category"
             containerStyle={{height: 60}}
-            style={{backgroundColor: '#FFF'}}
+            /* style={{backgroundColor: '#FFF'}} */
             itemStyle={{
               justifyContent: 'center',
             }}
@@ -250,6 +252,13 @@ const Upload = ({navigation}) => {
     </ScrollView>
   );
 };
+
+const styles = StyleSheet.create({
+  dropDown: {
+    backgroundColor: '#FFF',
+    marginBottom: 10,
+  },
+});
 
 Upload.propTypes = {
   navigation: PropTypes.object,

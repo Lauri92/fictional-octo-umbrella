@@ -5,6 +5,7 @@ import {
   Alert,
   KeyboardAvoidingView,
   ScrollView,
+  StyleSheet,
 } from 'react-native';
 import PropTypes from 'prop-types';
 import {Input, Text, Image, Button, Card, Icon} from 'react-native-elements';
@@ -91,6 +92,7 @@ const Modify = ({navigation, route}) => {
             errorMessage={uploadErrors.location}
           />
           <DropDownPicker
+            style={styles.dropDown}
             items={[
               {
                 label: 'Electronics',
@@ -134,7 +136,6 @@ const Modify = ({navigation, route}) => {
             value={inputs.category}
             placeholder="Select a category"
             containerStyle={{height: 60}}
-            style={{backgroundColor: '#FFF'}}
             itemStyle={{
               justifyContent: 'center',
             }}
@@ -161,6 +162,13 @@ const Modify = ({navigation, route}) => {
     </ScrollView>
   );
 };
+
+const styles = StyleSheet.create({
+  dropDown: {
+    backgroundColor: '#FFF',
+    marginBottom: 20,
+  },
+});
 
 Modify.propTypes = {
   navigation: PropTypes.object,

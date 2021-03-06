@@ -2,7 +2,7 @@ import React, {useContext} from 'react';
 import PropTypes from 'prop-types';
 import {uploadsUrl} from '../utils/variables';
 import {Icon, Avatar, ListItem as RNEListItem} from 'react-native-elements';
-import {StyleSheet, View} from 'react-native';
+import {StyleSheet, Text, View} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useMedia} from '../hooks/ApiHooks';
 import {MainContext} from '../contexts/MainContext';
@@ -52,18 +52,25 @@ const ListItem = ({navigation, singleMedia, isMyFile}) => {
         rounded
         source={{uri: uploadsUrl + singleMedia.thumbnails.w160}}
       ></Avatar>
+
       <RNEListItem.Content>
         {isMyFile && (
           <>
-            <Button
-              title="Modify"
-              onPress={() => navigation.push('Modify', {file: singleMedia})}
-            ></Button>
-            <View style={styles.deleteIcon}>
+            <View style={styles.iconsView}>
               <Icon
+                style={styles.modifyBtton}
+                size={30}
+                name="edit"
+                type="antdesign"
+                color="#517fa4"
+                onPress={() => navigation.push('Modify', {file: singleMedia})}
+              ></Icon>
+              <Icon
+                style={styles.deleteButton}
+                size={30}
                 name="delete"
                 type="material"
-                color="#517fa4"
+                color="#a10505"
                 onPress={doDelete}
               />
             </View>
@@ -83,9 +90,16 @@ const ListItem = ({navigation, singleMedia, isMyFile}) => {
 };
 
 const styles = StyleSheet.create({
-  deleteIcon: {
-    right: 100,
+  iconsView: {
+    right: 90,
+    // top: 115,
+    width: 250,
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
   },
+  modifyButton: {},
+  deleteButton: {},
 });
 
 ListItem.propTypes = {

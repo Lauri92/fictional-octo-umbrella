@@ -256,7 +256,32 @@ const useUser = () => {
     }
   };
 
-  return {postRegister, checkToken, checkIsUserAvailable, getUser};
+  const updateUserUsername = async (token, username) => {
+    console.log('trying to update username');
+    const options = {
+      method: 'PUT',
+      headers: {
+        'x-access-token': token,
+        'Content-type': 'application/json',
+      },
+      body: JSON.stringify(username),
+    };
+    console.log('apihooks updateUserUsername', options);
+    try {
+      const json = await doFetch(baseUrl + 'users', options);
+      return json;
+    } catch (e) {
+      throw new Error(e.message);
+    }
+  };
+
+  return {
+    postRegister,
+    checkToken,
+    checkIsUserAvailable,
+    getUser,
+    updateUserUsername,
+  };
 };
 
 const useTag = () => {
