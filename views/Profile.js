@@ -24,6 +24,7 @@ import {useTag} from '../hooks/ApiHooks';
 import {uploadsUrl} from '../utils/variables';
 import {ScrollView} from 'react-native-gesture-handler';
 import useUsernameForm from '../hooks/UpdateHooks';
+import useEmailForm from '../hooks/UpdateEmailHooks';
 
 const Profile = ({navigation}) => {
   const {isLoggedIn, setIsLoggedIn, user} = useContext(MainContext);
@@ -39,6 +40,8 @@ const Profile = ({navigation}) => {
     usernameErrors,
     checkUserAvailable,
   } = useUsernameForm();
+
+  const {handleEmailInputChange, emailInputs, emailErrors} = useEmailForm();
 
   const logout = async () => {
     setIsLoggedIn(false);
@@ -69,12 +72,31 @@ const Profile = ({navigation}) => {
     toggleUsernameOverlay();
   };
 
+  const doEmailUpdate = async () => {
+    const userToken = await AsyncStorage.getItem('userToken');
+    const newEmailInfo = {email: emailInputs.email};
+    const resp = await updateUserUsername(userToken, newEmailInfo);
+    console.log('upload response', resp);
+    const userData = await checkToken(userToken);
+    setUser(userData);
+    Alert.alert(
+      'Update',
+      resp.message,
+      [
+        {
+          text: 'Ok',
+        },
+      ],
+      {cancelable: false}
+    );
+    toggleEmailOverlay();
+  };
+
   const toggleUsernameOverlay = () => {
     setUserOverlayVisible(!userOverlayVisible);
   };
 
   const toggleEmailOverlay = () => {
-    console.log('here');
     setEmailOverlayVisible(!emailOverlayVisible);
   };
 
@@ -178,8 +200,8 @@ const Profile = ({navigation}) => {
             <Input
               maxLength={25}
               placeholder={'New email'}
-              onChangeText={(txt) => handleInputChange('email', txt)}
-              errorMessage={usernameErrors.username}
+              onChangeText={(txt) => handleEmailInputChange('email', txt)}
+              errorMessage={emailErrors.email}
               leftIcon={{type: 'Fontisto', name: 'email'}}
             />
           </View>
@@ -191,8 +213,8 @@ const Profile = ({navigation}) => {
             />
             <Button
               title="Submit"
-              /* onPress={doUsernameUpdate} */
-              disabled={usernameErrors.username !== null}
+              onPress={doEmailUpdate}
+              disabled={emailErrors.email !== null}
             />
           </View>
         </Overlay>
