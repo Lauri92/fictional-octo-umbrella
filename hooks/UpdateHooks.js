@@ -1,5 +1,6 @@
 import {useState} from 'react';
 import {validator} from '../utils/validator';
+import {useUser} from './ApiHooks';
 
 const constraints = {
   username: {
@@ -18,6 +19,7 @@ const useUsernameForm = (callback) => {
     username: '',
   });
   const [usernameErrors, setUsernameErrors] = useState({});
+  const {checkIsUserAvailable} = useUser();
 
   const handleInputChange = (name, text) => {
     // console.log(name, text);
@@ -37,11 +39,29 @@ const useUsernameForm = (callback) => {
     });
   };
 
+  const checkUserAvailable = async (event) => {
+    // console.log('username input', event.nativeEvent.text);
+    try {
+      const result = await checkIsUserAvailable(event.nativeEvent.text);
+      if (!result) {
+        setUsernameErrors((registerErrors) => {
+          return {
+            ...registerErrors,
+            username: 'Username already exists',
+          };
+        });
+      }
+    } catch (error) {
+      console.error('reg checkUserAvailable', error);
+    }
+  };
+
   return {
     handleInputChange,
     inputs,
     setInputs,
     usernameErrors,
+    checkUserAvailable,
   };
 };
 
