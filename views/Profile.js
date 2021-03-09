@@ -12,7 +12,7 @@ import EmailOverlay from '../components/EmailOverlay';
 
 const Profile = ({navigation}) => {
   const {isLoggedIn, setIsLoggedIn, user} = useContext(MainContext);
-  const [avatar, setAvatar] = useState('http://placekitten.com/640');
+  /* const [avatar, setAvatar] = useState('http://placekitten.com/640'); */
   const {getFilesByTag} = useTag();
   const [userOverlayVisible, setUserOverlayVisible] = useState(false);
   const [emailOverlayVisible, setEmailOverlayVisible] = useState(false);
@@ -34,7 +34,7 @@ const Profile = ({navigation}) => {
     setEmailOverlayVisible(!emailOverlayVisible);
   };
 
-  useEffect(() => {
+  /* useEffect(() => {
     const fetchAvatar = async () => {
       try {
         const avatarList = await getFilesByTag('avatar_' + user.user_id);
@@ -46,7 +46,7 @@ const Profile = ({navigation}) => {
       }
     };
     fetchAvatar();
-  }, []);
+  }, []); */
 
   return (
     <ScrollView>
@@ -87,7 +87,6 @@ const Profile = ({navigation}) => {
       </Card>
       {userOverlayVisible && (
         <Overlay
-          style={styles.overlay}
           isVisible={userOverlayVisible}
           onBackdropPress={toggleUsernameOverlay}
         >
@@ -99,7 +98,6 @@ const Profile = ({navigation}) => {
       )}
       {emailOverlayVisible && (
         <Overlay
-          style={styles.overlay}
           isVisible={emailOverlayVisible}
           onBackdropPress={toggleEmailOverlay}
         >

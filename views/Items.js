@@ -61,7 +61,14 @@ const Items = ({navigation}) => {
           {
             label: 'All',
             value: '',
-            icon: () => <Icon name="flag" size={18} color="#000" />,
+            icon: () => (
+              <Icon
+                type="antdesign"
+                name="checkcircleo"
+                size={18}
+                color="#000"
+              />
+            ),
           },
           {
             label: 'Electronics',

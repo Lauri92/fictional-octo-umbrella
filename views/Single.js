@@ -1,21 +1,12 @@
 import React, {useEffect, useState, useContext} from 'react';
-import {
-  StyleSheet,
-  ActivityIndicator,
-  TextInput,
-  View,
-  Button,
-  Alert,
-  Linking,
-} from 'react-native';
+import {StyleSheet, ActivityIndicator, Linking} from 'react-native';
 import PropTypes from 'prop-types';
 import {uploadsUrl} from '../utils/variables';
-import {Avatar, Card, ListItem, Text, Overlay} from 'react-native-elements';
+import {Card, Text, Overlay} from 'react-native-elements';
 import moment from 'moment';
 import {
   useTag,
   useUser,
-  useComment,
   useFavourites,
   useLoadComments,
   useLoadFavourites,
@@ -27,20 +18,17 @@ import {ScrollView} from 'react-native-gesture-handler';
 import CommentList from '../components/CommentList';
 import FloatingActionButton from '../components/FloatingActionButton';
 import FavoriteButton from '../components/FavoriteButton';
-import useCommentForm from '../hooks/CommentHooks';
 import {MainContext} from '../contexts/MainContext';
+import CommentOverlay from '../components/CommentOverlay';
 
 const Single = ({route}) => {
   const {file} = route.params;
-  // console.log('file: ', file);
   const commentArray = useLoadComments(file.file_id);
   const favouritesArray = useLoadFavourites();
   const checkFavourite = favouritesArray.filter(
     (item) => item.file_id === file.file_id
   );
   const isFavourite = checkFavourite.length > 0 ? true : false;
-  // const allData = JSON.parse(file.description);
-  // const {description, price, location} = allData;
   const {
     description: {category, description, location, price},
   } = file;
@@ -49,45 +37,10 @@ const Single = ({route}) => {
   const [isLoggedUser, setIsLoggedUser] = useState(true);
   const {getFilesByTag} = useTag();
   const {getUser, checkToken} = useUser();
-  const {uploadComment} = useComment();
   const {createFavourite, deleteFavourite} = useFavourites();
   const {update, setUpdate} = useContext(MainContext);
   const [videoRef, setVideoRef] = useState(null);
   const [overlayVisible, setOverlayVisible] = useState(false);
-
-  const {handleInputChange, inputs, commentErrors} = useCommentForm();
-
-  const doCommentUpload = async () => {
-    try {
-      const userToken = await AsyncStorage.getItem('userToken');
-      const commentInfo = {comment: inputs.comment, file_id: file.file_id};
-      const resp = await uploadComment(commentInfo, userToken);
-      console.log('upload response', resp);
-      setUpdate(update + 1);
-      toggleOverlay();
-
-      /* Alert.alert(
-        'Comment',
-        'Comment uploaded',
-        [
-          {
-            text: 'Ok',
-            onPress: () => {
-              setUpdate(update + 1);
-              toggleOverlay();
-              console.log(update);
-            },
-          },
-        ],
-        {cancelable: false}
-      ); */
-    } catch (error) {
-      Alert.alert('Upload', 'Failed');
-      console.error(error);
-    } finally {
-      // setIsUploading(false);
-    }
-  };
 
   const toggleOverlay = () => {
     setOverlayVisible(!overlayVisible);
@@ -269,24 +222,10 @@ const Single = ({route}) => {
           isVisible={overlayVisible}
           onBackdropPress={toggleOverlay}
         >
-          <Card.Title h4>Comment this sales ad</Card.Title>
-          <Text>Min. 15 characters</Text>
-          <TextInput
-            multiline={true}
-            numberOfLines={4}
-            maxLength={255}
-            style={styles.input}
-            onChangeText={(txt) => handleInputChange('comment', txt)}
-            errorMessage={commentErrors.comment}
+          <CommentOverlay
+            toggleCommentOverlay={toggleOverlay}
+            file_id={file.file_id}
           />
-          <View style={styles.container}>
-            <Button color="#fcba03" onPress={toggleOverlay} title="Cancel" />
-            <Button
-              title="Submit"
-              onPress={doCommentUpload}
-              disabled={commentErrors.comment !== null}
-            />
-          </View>
         </Overlay>
       )}
     </>
