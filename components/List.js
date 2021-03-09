@@ -5,13 +5,20 @@ import ListItem from './ListItem';
 import PropTypes from 'prop-types';
 import {MainContext} from '../contexts/MainContext';
 
-const List = ({navigation, myFilesOnly, onlyFavorites, searchContent}) => {
+const List = ({
+  navigation,
+  myFilesOnly,
+  onlyFavorites,
+  searchContent,
+  specificUser,
+}) => {
   const {user} = useContext(MainContext);
   const mediaArray = useLoadMedia(
     myFilesOnly,
     user.user_id,
     onlyFavorites,
-    searchContent
+    searchContent,
+    specificUser
   );
 
   return (
@@ -34,6 +41,7 @@ List.propTypes = {
   myFilesOnly: PropTypes.bool,
   onlyFavorites: PropTypes.bool,
   searchContent: PropTypes.string,
+  specificUser: PropTypes.number,
 };
 
 export default List;

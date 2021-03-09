@@ -21,7 +21,7 @@ import FavoriteButton from '../components/FavoriteButton';
 import {MainContext} from '../contexts/MainContext';
 import CommentOverlay from '../components/CommentOverlay';
 
-const Single = ({route}) => {
+const Single = ({route, navigation}) => {
   const {file} = route.params;
   const commentArray = useLoadComments(file.file_id);
   const favouritesArray = useLoadFavourites();
@@ -175,9 +175,17 @@ const Single = ({route}) => {
           {/* <Avatar source={{uri: avatar}} /> */}
           <Card.Divider />
           <Text style={styles.underline}>Contact info</Text>
-          <Text>
+          <Text
+            /* onPress={() => navigation.push('User items')} */ onPress={() => {
+              navigation.navigate(
+                'User items',
+                {userId: file.user_id},
+                navigation
+              );
+            }}
+          >
             {'\n'}
-            Posted by: {owner.full_name}
+            Posted by: {owner.username}
           </Text>
           <Text
             style={styles.posterEmail}
@@ -187,6 +195,7 @@ const Single = ({route}) => {
               )
             }
           >
+            {'\n'}
             Contact info: {owner.email}
           </Text>
           {/* </ListItem> */}
@@ -269,6 +278,7 @@ const styles = StyleSheet.create({
 
 Single.propTypes = {
   route: PropTypes.object,
+  navigation: PropTypes.object,
 };
 
 export default Single;

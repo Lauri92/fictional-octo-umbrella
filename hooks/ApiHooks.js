@@ -22,14 +22,16 @@ const doFetch = async (url, options = {}) => {
 
 const useLoadMedia = (
   myFilesOnly,
-  userId,
+  loggedUserId,
   onlyFavorites,
-  searchContent = ''
+  searchContent = '',
+  specificUser = ''
 ) => {
   const [mediaArray, setMediaArray] = useState([]);
   const {update} = useContext(MainContext);
+  console.log('specificUser in ApiHooks:', specificUser);
   const loadMedia = async () => {
-    if (!onlyFavorites && searchContent === '') {
+    if (!onlyFavorites && searchContent === '' && specificUser === '') {
       console.log('1 useLoadMedia searchContent: ', searchContent);
       try {
         const listJson = await doFetch(baseUrl + 'tags/' + appIdentifier);
@@ -40,7 +42,7 @@ const useLoadMedia = (
           })
         );
         if (myFilesOnly) {
-          media = media.filter((item) => item.user_id === userId);
+          media = media.filter((item) => item.user_id === loggedUserId);
         }
         media = media.map((item) => {
           const parsed = JSON.parse(item.description);
@@ -86,7 +88,7 @@ const useLoadMedia = (
       } catch (error) {
         console.error('loadMedia error', error.message);
       }
-    } else if (searchContent !== '') {
+    } else if (searchContent !== '' && specificUser === '') {
       try {
         console.log('2 useLoadMedia searchContent: ', searchContent);
         const listJson = await doFetch(baseUrl + 'tags/' + appIdentifier);
@@ -96,7 +98,6 @@ const useLoadMedia = (
             return fileJson;
           })
         );
-        // const allData = JSON.parse(singleMedia.description);
 
         media = media.map((item) => {
           const parsed = JSON.parse(item.description);
@@ -123,6 +124,7 @@ const useLoadMedia = (
           );
           setMediaArray(media);
         } else {
+          // Custom search
           media = media.filter((item) =>
             item.description.description
               .toLowerCase()
@@ -133,8 +135,37 @@ const useLoadMedia = (
       } catch (error) {
         console.error('loadMedia error', error.message);
       }
-    } else {
-      console.log('No fetch.');
+    } else if (specificUser !== '') {
+      console.log('Handle specific user.');
+      try {
+        const listJson = await doFetch(baseUrl + 'tags/' + appIdentifier);
+        let media = await Promise.all(
+          listJson.map(async (item) => {
+            const fileJson = await doFetch(baseUrl + 'media/' + item.file_id);
+            return fileJson;
+          })
+        );
+        media = media.filter((item) => {
+          console.log('item.user_id: ', item.user_id);
+          console.log('specificuser: ', specificUser);
+          return item.user_id == specificUser;
+        });
+
+        media = media.map((item) => {
+          const parsed = JSON.parse(item.description);
+          const objToPass = {
+            category: parsed.category,
+            description: parsed.description,
+            location: parsed.location,
+            price: parsed.price,
+          };
+          item.description = objToPass;
+          return item;
+        });
+        setMediaArray(media);
+      } catch (error) {
+        console.error('loadMedia error', error.message);
+      }
     }
   };
   useEffect(() => {

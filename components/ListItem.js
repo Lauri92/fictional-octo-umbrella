@@ -2,11 +2,11 @@ import React, {useContext} from 'react';
 import PropTypes from 'prop-types';
 import {uploadsUrl} from '../utils/variables';
 import {Icon, Avatar, ListItem as RNEListItem} from 'react-native-elements';
-import {StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useMedia} from '../hooks/ApiHooks';
 import {MainContext} from '../contexts/MainContext';
-import {Alert, Button} from 'react-native';
+import {Alert} from 'react-native';
 
 const ListItem = ({navigation, singleMedia, isMyFile}) => {
   const {
@@ -44,7 +44,7 @@ const ListItem = ({navigation, singleMedia, isMyFile}) => {
     <RNEListItem
       bottomDivider
       onPress={() => {
-        navigation.navigate('Single', {file: singleMedia});
+        navigation.navigate('Single', {file: singleMedia}, navigation);
       }}
     >
       <Avatar
