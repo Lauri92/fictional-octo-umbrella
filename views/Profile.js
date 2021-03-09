@@ -1,30 +1,14 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {
-  StyleSheet,
-  ActivityIndicator,
-  Button,
-  View,
-  TextInput,
-  Alert,
-} from 'react-native';
+import {StyleSheet} from 'react-native';
 import {MainContext} from '../contexts/MainContext';
 import PropTypes from 'prop-types';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {
-  Card,
-  Text,
-  ListItem,
-  Avatar,
-  Overlay,
-  Input,
-  Icon,
-} from 'react-native-elements';
-import {useUser} from '../hooks/ApiHooks';
+import {Card, Text, ListItem, Avatar, Overlay} from 'react-native-elements';
 import {useTag} from '../hooks/ApiHooks';
 import {uploadsUrl} from '../utils/variables';
 import {ScrollView} from 'react-native-gesture-handler';
-import useUsernameForm from '../hooks/UpdateHooks';
-import useEmailForm from '../hooks/UpdateEmailHooks';
+import UsernameOverlay from '../components/UsernameOverlay';
+import EmailOverlay from '../components/EmailOverlay';
 
 const Profile = ({navigation}) => {
   const {isLoggedIn, setIsLoggedIn, user} = useContext(MainContext);
@@ -32,16 +16,6 @@ const Profile = ({navigation}) => {
   const {getFilesByTag} = useTag();
   const [userOverlayVisible, setUserOverlayVisible] = useState(false);
   const [emailOverlayVisible, setEmailOverlayVisible] = useState(false);
-  const {setUser} = useContext(MainContext);
-  const {updateUserUsername, checkToken} = useUser();
-  const {
-    handleInputChange,
-    inputs,
-    usernameErrors,
-    checkUserAvailable,
-  } = useUsernameForm();
-
-  const {handleEmailInputChange, emailInputs, emailErrors} = useEmailForm();
 
   const logout = async () => {
     setIsLoggedIn(false);
@@ -50,46 +24,6 @@ const Profile = ({navigation}) => {
       // this is to make sure isLoggedIn has changed, will be removed later
       navigation.navigate('Login');
     }
-  };
-
-  const doUsernameUpdate = async () => {
-    const userToken = await AsyncStorage.getItem('userToken');
-    const newUsernameInfo = {username: inputs.username};
-    const resp = await updateUserUsername(userToken, newUsernameInfo);
-    console.log('upload response', resp);
-    const userData = await checkToken(userToken);
-    setUser(userData);
-    Alert.alert(
-      'Update',
-      resp.message,
-      [
-        {
-          text: 'Ok',
-        },
-      ],
-      {cancelable: false}
-    );
-    toggleUsernameOverlay();
-  };
-
-  const doEmailUpdate = async () => {
-    const userToken = await AsyncStorage.getItem('userToken');
-    const newEmailInfo = {email: emailInputs.email};
-    const resp = await updateUserUsername(userToken, newEmailInfo);
-    console.log('upload response', resp);
-    const userData = await checkToken(userToken);
-    setUser(userData);
-    Alert.alert(
-      'Update',
-      resp.message,
-      [
-        {
-          text: 'Ok',
-        },
-      ],
-      {cancelable: false}
-    );
-    toggleEmailOverlay();
   };
 
   const toggleUsernameOverlay = () => {
@@ -124,11 +58,6 @@ const Profile = ({navigation}) => {
             onPress={toggleUsernameOverlay}
           />
         </ListItem>
-        {/* <Card.Image
-          source={{uri: avatar}}
-          style={styles.image}
-          PlaceholderContent={<ActivityIndicator />}
-        /> */}
         <ListItem>
           <Avatar icon={{name: 'email', color: 'black'}} />
           <Text>{user.email}</Text>
@@ -162,31 +91,10 @@ const Profile = ({navigation}) => {
           isVisible={userOverlayVisible}
           onBackdropPress={toggleUsernameOverlay}
         >
-          <Card.Title h4>Update a new profile name</Card.Title>
-          <View>
-            <Input
-              maxLength={15}
-              placeholder={'New username'}
-              onChangeText={(txt) => handleInputChange('username', txt)}
-              onEndEditing={(event) => {
-                checkUserAvailable(event);
-              }}
-              errorMessage={usernameErrors.username}
-              leftIcon={{type: 'font-awesome', name: 'user'}}
-            />
-          </View>
-          <View style={styles.container}>
-            <Button
-              color="#fcba03"
-              onPress={toggleUsernameOverlay}
-              title="Cancel"
-            />
-            <Button
-              title="Submit"
-              onPress={doUsernameUpdate}
-              disabled={usernameErrors.username !== null}
-            />
-          </View>
+          <UsernameOverlay
+            navigation={navigation}
+            toggleUsernameOverlay={toggleUsernameOverlay}
+          />
         </Overlay>
       )}
       {emailOverlayVisible && (
@@ -195,28 +103,10 @@ const Profile = ({navigation}) => {
           isVisible={emailOverlayVisible}
           onBackdropPress={toggleEmailOverlay}
         >
-          <Card.Title h4>Update a new email address</Card.Title>
-          <View>
-            <Input
-              maxLength={25}
-              placeholder={'New email'}
-              onChangeText={(txt) => handleEmailInputChange('email', txt)}
-              errorMessage={emailErrors.email}
-              leftIcon={{type: 'Fontisto', name: 'email'}}
-            />
-          </View>
-          <View style={styles.container}>
-            <Button
-              color="#fcba03"
-              onPress={toggleEmailOverlay}
-              title="Cancel"
-            />
-            <Button
-              title="Submit"
-              onPress={doEmailUpdate}
-              disabled={emailErrors.email !== null}
-            />
-          </View>
+          <EmailOverlay
+            navigation={navigation}
+            toggleEmailOverlay={toggleEmailOverlay}
+          />
         </Overlay>
       )}
     </ScrollView>
@@ -228,18 +118,6 @@ const styles = StyleSheet.create({
     width: '100%',
     height: undefined,
     aspectRatio: 1,
-  },
-  input: {
-    height: 30,
-    width: 200,
-    borderColor: 'gray',
-    borderWidth: 1,
-    marginBottom: 25,
-  },
-  container: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-around',
   },
 });
 
