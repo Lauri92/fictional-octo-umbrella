@@ -306,12 +306,27 @@ const useUser = () => {
     }
   };
 
+  const deleteUser = async (userId, token) => {
+    const options = {
+      method: 'DELETE',
+      headers: {'x-access-token': token},
+    };
+    try {
+      console.log('userId at deleteUser: ', userId);
+      // const result = await doFetch(baseUrl + 'media/users/' + userId, options);
+      // return result;
+    } catch (error) {
+      throw new Error('deleteUser error: ' + error.message);
+    }
+  };
+
   return {
     postRegister,
     checkToken,
     checkIsUserAvailable,
     getUser,
     updateUserUsername,
+    deleteUser,
   };
 };
 

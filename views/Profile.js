@@ -1,11 +1,10 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {StyleSheet} from 'react-native';
+import {Alert, StyleSheet} from 'react-native';
 import {MainContext} from '../contexts/MainContext';
 import PropTypes from 'prop-types';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {Card, Text, ListItem, Avatar, Overlay} from 'react-native-elements';
-import {useTag} from '../hooks/ApiHooks';
-import {uploadsUrl} from '../utils/variables';
+import {useTag, useUser} from '../hooks/ApiHooks';
 import {ScrollView} from 'react-native-gesture-handler';
 import UsernameOverlay from '../components/UsernameOverlay';
 import EmailOverlay from '../components/EmailOverlay';
@@ -14,6 +13,7 @@ const Profile = ({navigation}) => {
   const {isLoggedIn, setIsLoggedIn, user} = useContext(MainContext);
   /* const [avatar, setAvatar] = useState('http://placekitten.com/640'); */
   const {getFilesByTag} = useTag();
+  const {deleteUser} = useUser();
   const [userOverlayVisible, setUserOverlayVisible] = useState(false);
   const [emailOverlayVisible, setEmailOverlayVisible] = useState(false);
 
@@ -24,6 +24,30 @@ const Profile = ({navigation}) => {
       // this is to make sure isLoggedIn has changed, will be removed later
       navigation.navigate('Login');
     }
+  };
+
+  const doUserDelete = () => {
+    Alert.alert(
+      'Delete',
+      'Do you really want to delete your account permanently?',
+      [
+        {text: 'Cancel'},
+        {
+          title: 'Ok',
+          onPress: async () => {
+            const userToken = await AsyncStorage.getItem('userToken');
+            try {
+              await deleteUser(user.user_id, userToken);
+              await logout();
+            } catch (error) {
+              // notify user here?
+              console.error(error);
+            }
+          },
+        },
+      ],
+      {cancelable: false}
+    );
   };
 
   const toggleUsernameOverlay = () => {
@@ -74,6 +98,13 @@ const Profile = ({navigation}) => {
           <Avatar icon={{name: 'perm-media', color: 'black'}} />
           <ListItem.Content>
             <ListItem.Title>My Files</ListItem.Title>
+          </ListItem.Content>
+          <ListItem.Chevron />
+        </ListItem>
+        <ListItem bottomDivider onPress={doUserDelete}>
+          <Avatar icon={{name: 'delete-forever', color: 'black'}} />
+          <ListItem.Content>
+            <ListItem.Title>Delete account</ListItem.Title>
           </ListItem.Content>
           <ListItem.Chevron />
         </ListItem>

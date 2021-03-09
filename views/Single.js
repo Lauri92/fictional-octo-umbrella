@@ -176,7 +176,8 @@ const Single = ({route, navigation}) => {
           <Card.Divider />
           <Text style={styles.underline}>Contact info</Text>
           <Text
-            /* onPress={() => navigation.push('User items')} */ onPress={() => {
+            style={styles.posterEmail}
+            onPress={() => {
               navigation.navigate(
                 'User items',
                 {userId: file.user_id},
