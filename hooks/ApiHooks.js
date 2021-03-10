@@ -440,7 +440,21 @@ const useMedia = () => {
     }
   };
 
-  return {upload, updateFile, deleteFile};
+  const getOwnItemsAmount = async (token) => {
+    const options = {
+      headers: {
+        'x-access-token': token,
+      },
+    };
+    try {
+      const json = await doFetch(baseUrl + 'media/user', options);
+      return json.length;
+    } catch (e) {
+      throw new Error(e.message);
+    }
+  };
+
+  return {upload, updateFile, deleteFile, getOwnItemsAmount};
 };
 
 const useComment = () => {

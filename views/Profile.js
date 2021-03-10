@@ -4,7 +4,13 @@ import {MainContext} from '../contexts/MainContext';
 import PropTypes from 'prop-types';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {Card, Text, ListItem, Avatar, Overlay} from 'react-native-elements';
-import {useTag, useUser, useComment, useFavourites} from '../hooks/ApiHooks';
+import {
+  useTag,
+  useUser,
+  useComment,
+  useFavourites,
+  useMedia,
+} from '../hooks/ApiHooks';
 import {ScrollView} from 'react-native-gesture-handler';
 import UsernameOverlay from '../components/UsernameOverlay';
 import EmailOverlay from '../components/EmailOverlay';
@@ -17,10 +23,12 @@ const Profile = ({navigation}) => {
   const {deleteUser} = useUser();
   const {getCommentAmount} = useComment();
   const {getFavoriteAmount} = useFavourites();
+  const {getOwnItemsAmount} = useMedia();
   const [userOverlayVisible, setUserOverlayVisible] = useState(false);
   const [emailOverlayVisible, setEmailOverlayVisible] = useState(false);
   const [commentAmount, setCommentAmount] = useState('');
   const [favouriteAmount, setFavouriteAmount] = useState('');
+  const [ownItemsAmount, setOwnItemsAmount] = useState('');
 
   const logout = async () => {
     setIsLoggedIn(false);
@@ -76,9 +84,16 @@ const Profile = ({navigation}) => {
     setFavouriteAmount(favourites);
   };
 
+  const fetchOwnItemsAmount = async () => {
+    const userToken = await AsyncStorage.getItem('userToken');
+    const items = await getOwnItemsAmount(userToken);
+    setOwnItemsAmount(items);
+  };
+
   useEffect(() => {
     fetchCommentAmount();
     fetchFavouriteAmount();
+    fetchOwnItemsAmount();
     /* const fetchAvatar = async () => {
       try {
         const avatarList = await getFilesByTag('avatar_' + user.user_id);
@@ -117,7 +132,7 @@ const Profile = ({navigation}) => {
         <ListItem bottomDivider onPress={() => navigation.push('My Files')}>
           <Avatar icon={{name: 'perm-media', color: 'black'}} />
           <ListItem.Content>
-            <ListItem.Title>My Files</ListItem.Title>
+            <ListItem.Title>My Files: {ownItemsAmount}</ListItem.Title>
           </ListItem.Content>
           <ListItem.Chevron />
         </ListItem>
