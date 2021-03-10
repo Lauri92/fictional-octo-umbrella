@@ -1,5 +1,5 @@
 import React, {useEffect, useState, useContext} from 'react';
-import {StyleSheet, ActivityIndicator, Linking} from 'react-native';
+import {StyleSheet, ActivityIndicator, Linking, Alert} from 'react-native';
 import PropTypes from 'prop-types';
 import {uploadsUrl} from '../utils/variables';
 import {Card, Text, Overlay} from 'react-native-elements';
@@ -49,13 +49,37 @@ const Single = ({route, navigation}) => {
   const postFavourite = () => {
     console.log('Create favorite here!');
     createFavourite({file_id: file.file_id});
-    setUpdate(update + 1);
+    Alert.alert(
+      'Favourite',
+      'Favourite added',
+      [
+        {
+          text: 'Ok',
+          onPress: () => {
+            setUpdate(update + 1);
+          },
+        },
+      ],
+      {cancelable: false}
+    );
   };
 
   const removeFavourite = () => {
     console.log('Remove favorite here!');
     deleteFavourite(file.file_id);
-    setUpdate(update + 1);
+    Alert.alert(
+      'Favourite',
+      'Favourite removed',
+      [
+        {
+          text: 'Ok',
+          onPress: () => {
+            setUpdate(update + 1);
+          },
+        },
+      ],
+      {cancelable: false}
+    );
   };
 
   const fetchAvatar = async () => {
