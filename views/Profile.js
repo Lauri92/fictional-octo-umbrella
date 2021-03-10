@@ -4,7 +4,7 @@ import {MainContext} from '../contexts/MainContext';
 import PropTypes from 'prop-types';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {Card, Text, ListItem, Avatar, Overlay} from 'react-native-elements';
-import {useTag, useUser} from '../hooks/ApiHooks';
+import {useTag, useUser, useComment, useFavourites} from '../hooks/ApiHooks';
 import {ScrollView} from 'react-native-gesture-handler';
 import UsernameOverlay from '../components/UsernameOverlay';
 import EmailOverlay from '../components/EmailOverlay';
@@ -12,10 +12,15 @@ import EmailOverlay from '../components/EmailOverlay';
 const Profile = ({navigation}) => {
   const {isLoggedIn, setIsLoggedIn, user} = useContext(MainContext);
   /* const [avatar, setAvatar] = useState('http://placekitten.com/640'); */
+  const {update} = useContext(MainContext);
   const {getFilesByTag} = useTag();
   const {deleteUser} = useUser();
+  const {getCommentAmount} = useComment();
+  const {getFavoriteAmount} = useFavourites();
   const [userOverlayVisible, setUserOverlayVisible] = useState(false);
   const [emailOverlayVisible, setEmailOverlayVisible] = useState(false);
+  const [commentAmount, setCommentAmount] = useState('');
+  const [favouriteAmount, setFavouriteAmount] = useState('');
 
   const logout = async () => {
     setIsLoggedIn(false);
@@ -26,6 +31,7 @@ const Profile = ({navigation}) => {
     }
   };
 
+  // Requires admin permissions
   const doUserDelete = () => {
     Alert.alert(
       'Delete',
@@ -58,8 +64,22 @@ const Profile = ({navigation}) => {
     setEmailOverlayVisible(!emailOverlayVisible);
   };
 
-  /* useEffect(() => {
-    const fetchAvatar = async () => {
+  const fetchCommentAmount = async () => {
+    const userToken = await AsyncStorage.getItem('userToken');
+    const comments = await getCommentAmount(userToken);
+    setCommentAmount(comments);
+  };
+
+  const fetchFavouriteAmount = async () => {
+    const userToken = await AsyncStorage.getItem('userToken');
+    const favourites = await getFavoriteAmount(userToken);
+    setFavouriteAmount(favourites);
+  };
+
+  useEffect(() => {
+    fetchCommentAmount();
+    fetchFavouriteAmount();
+    /* const fetchAvatar = async () => {
       try {
         const avatarList = await getFilesByTag('avatar_' + user.user_id);
         if (avatarList.length > 0) {
@@ -69,8 +89,8 @@ const Profile = ({navigation}) => {
         console.error(error.message);
       }
     };
-    fetchAvatar();
-  }, []); */
+    fetchAvatar(); */
+  }, [update]);
 
   return (
     <ScrollView>
@@ -101,13 +121,37 @@ const Profile = ({navigation}) => {
           </ListItem.Content>
           <ListItem.Chevron />
         </ListItem>
-        <ListItem bottomDivider onPress={doUserDelete}>
+        <ListItem
+          bottomDivider
+          onPress={() => console.log('Show list of items I have commented?')}
+        >
+          <Avatar icon={{name: 'chat-bubble', color: 'black'}} />
+          <ListItem.Content>
+            <ListItem.Title>Total comments: {commentAmount}</ListItem.Title>
+          </ListItem.Content>
+          <ListItem.Chevron />
+        </ListItem>
+        <ListItem
+          bottomDivider
+          onPress={() =>
+            navigation.push('Bookmarks')
+          } /* onPress={() => {
+            navigation.navigate('Bookmarks');
+          }} */
+        >
+          <Avatar icon={{name: 'star', color: 'black'}} />
+          <ListItem.Content>
+            <ListItem.Title>Total favorites: {favouriteAmount}</ListItem.Title>
+          </ListItem.Content>
+          <ListItem.Chevron />
+        </ListItem>
+        {/* <ListItem bottomDivider onPress={doUserDelete}>
           <Avatar icon={{name: 'delete-forever', color: 'black'}} />
           <ListItem.Content>
             <ListItem.Title>Delete account</ListItem.Title>
           </ListItem.Content>
           <ListItem.Chevron />
-        </ListItem>
+        </ListItem> */}
         <ListItem bottomDivider onPress={logout}>
           <Avatar icon={{name: 'logout', color: 'black'}} />
           <ListItem.Content>

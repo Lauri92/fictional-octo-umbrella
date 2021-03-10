@@ -29,10 +29,8 @@ const useLoadMedia = (
 ) => {
   const [mediaArray, setMediaArray] = useState([]);
   const {update} = useContext(MainContext);
-  console.log('specificUser in ApiHooks:', specificUser);
   const loadMedia = async () => {
     if (!onlyFavorites && searchContent === '' && specificUser === '') {
-      console.log('1 useLoadMedia searchContent: ', searchContent);
       try {
         const listJson = await doFetch(baseUrl + 'tags/' + appIdentifier);
         let media = await Promise.all(
@@ -90,7 +88,6 @@ const useLoadMedia = (
       }
     } else if (searchContent !== '' && specificUser === '') {
       try {
-        console.log('2 useLoadMedia searchContent: ', searchContent);
         const listJson = await doFetch(baseUrl + 'tags/' + appIdentifier);
         let media = await Promise.all(
           listJson.map(async (item) => {
@@ -146,8 +143,6 @@ const useLoadMedia = (
           })
         );
         media = media.filter((item) => {
-          console.log('item.user_id: ', item.user_id);
-          console.log('specificuser: ', specificUser);
           return item.user_id == specificUser;
         });
 
@@ -306,6 +301,7 @@ const useUser = () => {
     }
   };
 
+  // Requires admin permission
   const deleteUser = async (userId, token) => {
     const options = {
       method: 'DELETE',
@@ -313,8 +309,8 @@ const useUser = () => {
     };
     try {
       console.log('userId at deleteUser: ', userId);
-      // const result = await doFetch(baseUrl + 'media/users/' + userId, options);
-      // return result;
+      const result = await doFetch(baseUrl + 'users/' + userId, options);
+      return result;
     } catch (error) {
       throw new Error('deleteUser error: ' + error.message);
     }
@@ -442,7 +438,21 @@ const useComment = () => {
     }
   };
 
-  return {uploadComment, deleteComment};
+  const getCommentAmount = async (token) => {
+    const options = {
+      headers: {
+        'x-access-token': token,
+      },
+    };
+    try {
+      const json = await doFetch(baseUrl + 'comments/', options);
+      return json.length;
+    } catch (e) {
+      throw new Error(e.message);
+    }
+  };
+
+  return {uploadComment, deleteComment, getCommentAmount};
 };
 
 const useFavourites = () => {
@@ -485,7 +495,21 @@ const useFavourites = () => {
     }
   };
 
-  return {createFavourite, deleteFavourite};
+  const getFavoriteAmount = async (token) => {
+    const options = {
+      headers: {
+        'x-access-token': token,
+      },
+    };
+    try {
+      const json = await doFetch(baseUrl + 'favourites', options);
+      return json.length;
+    } catch (e) {
+      throw new Error(e.message);
+    }
+  };
+
+  return {createFavourite, deleteFavourite, getFavoriteAmount};
 };
 
 export {

@@ -71,6 +71,7 @@ const StackScreen = () => {
           <Stack.Screen name="My Files" component={MyFiles} />
           <Stack.Screen name="Single" component={Single} />
           <Stack.Screen name="User items" component={UserItems} />
+          <Tab.Screen name="Bookmarks" component={Bookmarks} />
         </>
       ) : (
         <>
