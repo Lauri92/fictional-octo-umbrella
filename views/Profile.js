@@ -123,7 +123,7 @@ const Profile = ({navigation}) => {
         </ListItem>
         <ListItem
           bottomDivider
-          onPress={() => console.log('Show list of items I have commented?')}
+          onPress={() => navigation.push('Commented items')}
         >
           <Avatar icon={{name: 'chat-bubble', color: 'black'}} />
           <ListItem.Content>

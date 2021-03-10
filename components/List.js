@@ -11,6 +11,7 @@ const List = ({
   onlyFavorites,
   searchContent,
   specificUser,
+  commentedItems,
 }) => {
   const {user} = useContext(MainContext);
   const mediaArray = useLoadMedia(
@@ -18,7 +19,8 @@ const List = ({
     user.user_id,
     onlyFavorites,
     searchContent,
-    specificUser
+    specificUser,
+    commentedItems
   );
 
   return (
@@ -40,6 +42,7 @@ List.propTypes = {
   navigation: PropTypes.object,
   myFilesOnly: PropTypes.bool,
   onlyFavorites: PropTypes.bool,
+  commentedItems: PropTypes.bool,
   searchContent: PropTypes.string,
   specificUser: PropTypes.number,
 };

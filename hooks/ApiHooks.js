@@ -25,12 +25,18 @@ const useLoadMedia = (
   loggedUserId,
   onlyFavorites,
   searchContent = '',
-  specificUser = ''
+  specificUser = '',
+  commentedItems
 ) => {
   const [mediaArray, setMediaArray] = useState([]);
   const {update} = useContext(MainContext);
   const loadMedia = async () => {
-    if (!onlyFavorites && searchContent === '' && specificUser === '') {
+    if (
+      !onlyFavorites &&
+      searchContent === '' &&
+      specificUser === '' &&
+      commentedItems !== true
+    ) {
       try {
         const listJson = await doFetch(baseUrl + 'tags/' + appIdentifier);
         let media = await Promise.all(
@@ -160,6 +166,40 @@ const useLoadMedia = (
         setMediaArray(media);
       } catch (error) {
         console.error('loadMedia error', error.message);
+      }
+    } else if (commentedItems === true) {
+      console.log('Commented items is true');
+      const userToken = await AsyncStorage.getItem('userToken');
+      const options = {
+        headers: {
+          'x-access-token': userToken,
+        },
+      };
+      try {
+        const comments = await doFetch(baseUrl + 'comments/', options);
+        const uniqueFiles = [
+          ...new Set(comments.map((comment) => comment.file_id)),
+        ];
+        let media = await Promise.all(
+          uniqueFiles.map(async (fileId) => {
+            const fileJson = await doFetch(baseUrl + 'media/' + fileId);
+            return fileJson;
+          })
+        );
+        media = media.map((item) => {
+          const parsed = JSON.parse(item.description);
+          const objToPass = {
+            category: parsed.category,
+            description: parsed.description,
+            location: parsed.location,
+            price: parsed.price,
+          };
+          item.description = objToPass;
+          return item;
+        });
+        setMediaArray(media);
+      } catch (e) {
+        throw new Error(e.message);
       }
     }
   };
@@ -446,6 +486,7 @@ const useComment = () => {
     };
     try {
       const json = await doFetch(baseUrl + 'comments/', options);
+      // console.log(json);
       return json.length;
     } catch (e) {
       throw new Error(e.message);

@@ -18,6 +18,7 @@ import Upload from '../views/Upload';
 import MyFiles from '../views/MyFiles';
 import Modify from '../views/Modify';
 import UserItems from '../views/UserItems';
+import CommentedItems from '../views/CommentedItems';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -72,6 +73,7 @@ const StackScreen = () => {
           <Stack.Screen name="Single" component={Single} />
           <Stack.Screen name="User items" component={UserItems} />
           <Tab.Screen name="Bookmarks" component={Bookmarks} />
+          <Tab.Screen name="Commented items" component={CommentedItems} />
         </>
       ) : (
         <>
