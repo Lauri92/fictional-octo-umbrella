@@ -239,7 +239,6 @@ const useLoadFavourites = () => {
       };
       const favourites = await doFetch(baseUrl + 'favourites', options);
       setFavouriteArray(favourites);
-      console.log('FavouriteArray', favourites);
     } catch (error) {
       console.error('loadFavorites error', error.message);
     }

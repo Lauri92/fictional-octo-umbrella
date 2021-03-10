@@ -234,18 +234,20 @@ const Upload = ({navigation}) => {
           <Button title="Choose from library" onPress={() => pickImage(true)} />
           <Button title="Use camera" onPress={() => pickImage(false)} />
           {isUploading && <ActivityIndicator size="large" color="#0000ff" />}
-          <Button
-            title="Upload file"
-            onPress={doUpload}
-            disabled={
-              uploadErrors.title !== null ||
-              uploadErrors.description !== null ||
-              uploadErrors.price !== null ||
-              uploadErrors.location !== null ||
-              uploadErrors.category !== null ||
-              image === null
-            }
-          />
+          {isUploading || (
+            <Button
+              title="Upload file"
+              onPress={doUpload}
+              disabled={
+                uploadErrors.title !== null ||
+                uploadErrors.description !== null ||
+                uploadErrors.price !== null ||
+                uploadErrors.location !== null ||
+                uploadErrors.category !== null ||
+                image === null
+              }
+            />
+          )}
           <Button title="Reset" onPress={doReset} />
         </Card>
       </KeyboardAvoidingView>

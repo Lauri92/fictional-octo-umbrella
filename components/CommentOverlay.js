@@ -1,5 +1,12 @@
-import React, {useContext} from 'react';
-import {StyleSheet, TextInput, View, Button, Alert} from 'react-native';
+import React, {useContext, useState} from 'react';
+import {
+  StyleSheet,
+  TextInput,
+  View,
+  Button,
+  Alert,
+  ActivityIndicator,
+} from 'react-native';
 import PropTypes from 'prop-types';
 import {Card, Text} from 'react-native-elements';
 import {useComment} from '../hooks/ApiHooks';
@@ -11,9 +18,11 @@ const CommentOverlay = ({toggleCommentOverlay, file_id}) => {
   const {uploadComment} = useComment();
   const {handleInputChange, inputs, commentErrors} = useCommentForm();
   const {update, setUpdate} = useContext(MainContext);
+  const [isUploading, setIsUploading] = useState(false);
 
   const doCommentUpload = async () => {
     try {
+      setIsUploading(true);
       const userToken = await AsyncStorage.getItem('userToken');
       const commentInfo = {comment: inputs.comment, file_id: file_id};
       const resp = await uploadComment(commentInfo, userToken);
@@ -54,14 +63,21 @@ const CommentOverlay = ({toggleCommentOverlay, file_id}) => {
         onChangeText={(txt) => handleInputChange('comment', txt)}
         errorMessage={commentErrors.comment}
       />
-      <View style={styles.container}>
-        <Button color="#fcba03" onPress={toggleCommentOverlay} title="Cancel" />
-        <Button
-          title="Submit"
-          onPress={doCommentUpload}
-          disabled={commentErrors.comment !== null}
-        />
-      </View>
+      {isUploading && <ActivityIndicator size="large" color="#0000ff" />}
+      {isUploading || (
+        <View style={styles.container}>
+          <Button
+            color="#fcba03"
+            onPress={toggleCommentOverlay}
+            title="Cancel"
+          />
+          <Button
+            title="Submit"
+            onPress={doCommentUpload}
+            disabled={commentErrors.comment !== null}
+          />
+        </View>
+      )}
     </>
   );
 };
@@ -83,7 +99,7 @@ const styles = StyleSheet.create({
 });
 
 CommentOverlay.propTypes = {
-  file_id: PropTypes.string,
+  file_id: PropTypes.number,
   toggleCommentOverlay: PropTypes.func,
 };
 
