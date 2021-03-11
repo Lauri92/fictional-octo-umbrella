@@ -93,10 +93,10 @@ const styles = StyleSheet.create({
   iconsView: {
     right: 90,
     // top: 115,
-    width: 250,
+    width: 325,
     display: 'flex',
     flexDirection: 'row',
-    justifyContent: 'flex-start',
+    justifyContent: 'flex-end',
   },
   modifyButton: {},
   deleteButton: {},

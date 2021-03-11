@@ -506,7 +506,16 @@ const useComment = () => {
     }
   };
 
-  return {uploadComment, deleteComment, getCommentAmount};
+  const getItemCommentAmount = async (fileId) => {
+    try {
+      const json = await doFetch(baseUrl + 'comments/file/' + fileId);
+      return json.length;
+    } catch (e) {
+      throw new Error(e.message);
+    }
+  };
+
+  return {uploadComment, deleteComment, getCommentAmount, getItemCommentAmount};
 };
 
 const useFavourites = () => {
@@ -563,7 +572,21 @@ const useFavourites = () => {
     }
   };
 
-  return {createFavourite, deleteFavourite, getFavoriteAmount};
+  const getItemFavouriteAmount = async (fileId) => {
+    try {
+      const json = await doFetch(baseUrl + 'favourites/file/' + fileId);
+      return json.length;
+    } catch (e) {
+      throw new Error(e.message);
+    }
+  };
+
+  return {
+    createFavourite,
+    deleteFavourite,
+    getFavoriteAmount,
+    getItemFavouriteAmount,
+  };
 };
 
 export {

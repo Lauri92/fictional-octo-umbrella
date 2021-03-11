@@ -14,7 +14,11 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import useCommentForm from '../hooks/CommentHooks';
 import {MainContext} from '../contexts/MainContext';
 
-const CommentOverlay = ({toggleCommentOverlay, file_id}) => {
+const CommentOverlay = ({
+  toggleCommentOverlay,
+  file_id,
+  updateCommentAmount,
+}) => {
   const {uploadComment} = useComment();
   const {handleInputChange, inputs, commentErrors} = useCommentForm();
   const {update, setUpdate} = useContext(MainContext);
@@ -28,7 +32,7 @@ const CommentOverlay = ({toggleCommentOverlay, file_id}) => {
       const resp = await uploadComment(commentInfo, userToken);
       console.log('upload response', resp);
       setUpdate(update + 1);
-      toggleCommentOverlay();
+      // toggleCommentOverlay();
 
       Alert.alert(
         'Comment',
@@ -38,6 +42,7 @@ const CommentOverlay = ({toggleCommentOverlay, file_id}) => {
             text: 'Ok',
             onPress: () => {
               toggleCommentOverlay();
+              updateCommentAmount();
             },
           },
         ],
@@ -101,6 +106,7 @@ const styles = StyleSheet.create({
 CommentOverlay.propTypes = {
   file_id: PropTypes.number,
   toggleCommentOverlay: PropTypes.func,
+  updateCommentAmount: PropTypes.func,
 };
 
 export default CommentOverlay;

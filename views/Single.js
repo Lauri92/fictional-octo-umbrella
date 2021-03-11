@@ -2,7 +2,7 @@ import React, {useEffect, useState, useContext} from 'react';
 import {StyleSheet, ActivityIndicator, Linking, Alert} from 'react-native';
 import PropTypes from 'prop-types';
 import {uploadsUrl} from '../utils/variables';
-import {Card, Text, Overlay} from 'react-native-elements';
+import {Card, Text, Overlay, Avatar, ListItem} from 'react-native-elements';
 import moment from 'moment';
 import {
   useTag,
@@ -10,6 +10,7 @@ import {
   useFavourites,
   useLoadComments,
   useLoadFavourites,
+  useComment,
 } from '../hooks/ApiHooks';
 import {Video} from 'expo-av';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -33,11 +34,18 @@ const Single = ({route, navigation}) => {
     description: {category, description, location, price},
   } = file;
   const [avatar, setAvatar] = useState('http://placekitten.com/100');
+  const {getItemCommentAmount} = useComment();
   const [owner, setOwner] = useState({username: 'somebody'});
   const [isLoggedUser, setIsLoggedUser] = useState(true);
+  const [commentLength, setCommentLength] = useState('');
+  const [favouriteLength, setFavouriteLength] = useState('');
   const {getFilesByTag} = useTag();
   const {getUser, checkToken} = useUser();
-  const {createFavourite, deleteFavourite} = useFavourites();
+  const {
+    createFavourite,
+    deleteFavourite,
+    getItemFavouriteAmount,
+  } = useFavourites();
   const {update, setUpdate} = useContext(MainContext);
   const [videoRef, setVideoRef] = useState(null);
   const [overlayVisible, setOverlayVisible] = useState(false);
@@ -57,6 +65,7 @@ const Single = ({route, navigation}) => {
           text: 'Ok',
           onPress: () => {
             setUpdate(update + 1);
+            itemFavourites();
           },
         },
       ],
@@ -75,6 +84,7 @@ const Single = ({route, navigation}) => {
           text: 'Ok',
           onPress: () => {
             setUpdate(update + 1);
+            itemFavourites();
           },
         },
       ],
@@ -144,11 +154,23 @@ const Single = ({route, navigation}) => {
     }
   };
 
+  const itemComments = async () => {
+    const amount = await getItemCommentAmount(file.file_id);
+    setCommentLength(amount);
+  };
+
+  const itemFavourites = async () => {
+    const amount = await getItemFavouriteAmount(file.file_id);
+    setFavouriteLength(amount);
+  };
+
   useEffect(() => {
     unlock();
     fetchAvatar();
     fetchOwner();
     fetchLoggedUser();
+    itemComments();
+    itemFavourites();
 
     const orientSub = ScreenOrientation.addOrientationChangeListener((evt) => {
       console.log('orientation', evt);
@@ -170,6 +192,12 @@ const Single = ({route, navigation}) => {
         <Card>
           <Card.Title h4>{file.title}</Card.Title>
           <Card.Title>{moment(file.time_added).format('LLL')}</Card.Title>
+          <ListItem>
+            <Avatar icon={{name: 'chat-bubble', color: 'black'}} />
+            <ListItem.Title>{commentLength}</ListItem.Title>
+            <Avatar icon={{name: 'star', color: 'black'}} />
+            <ListItem.Title>{favouriteLength}</ListItem.Title>
+          </ListItem>
           <Card.Divider />
           {file.media_type === 'image' ? (
             <Card.Image
@@ -258,6 +286,7 @@ const Single = ({route, navigation}) => {
         >
           <CommentOverlay
             toggleCommentOverlay={toggleOverlay}
+            updateCommentAmount={itemComments}
             file_id={file.file_id}
           />
         </Overlay>

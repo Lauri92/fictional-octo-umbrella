@@ -26,9 +26,9 @@ const Profile = ({navigation}) => {
   const {getOwnItemsAmount} = useMedia();
   const [userOverlayVisible, setUserOverlayVisible] = useState(false);
   const [emailOverlayVisible, setEmailOverlayVisible] = useState(false);
-  const [commentAmount, setCommentAmount] = useState('');
-  const [favouriteAmount, setFavouriteAmount] = useState('');
-  const [ownItemsAmount, setOwnItemsAmount] = useState('');
+  const [commentAmount, setCommentAmount] = useState('Loading');
+  const [favouriteAmount, setFavouriteAmount] = useState('Loading');
+  const [ownItemsAmount, setOwnItemsAmount] = useState('Loading');
 
   const logout = async () => {
     setIsLoggedIn(false);
