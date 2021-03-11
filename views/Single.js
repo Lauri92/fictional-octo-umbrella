@@ -329,7 +329,6 @@ const styles = StyleSheet.create({
     fontSize: 20,
   },
   posterEmail: {
-    textDecorationLine: 'underline',
     color: 'blue',
   },
 });

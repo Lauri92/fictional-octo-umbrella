@@ -4,7 +4,7 @@ import {Icon, ListItem as RNEListItem} from 'react-native-elements';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useUser, useComment} from '../hooks/ApiHooks';
 import moment from 'moment';
-import {Alert} from 'react-native';
+import {Alert, StyleSheet} from 'react-native';
 import {MainContext} from '../contexts/MainContext';
 
 const CommentListItem = ({singleComment, updateCommentAmount}) => {
@@ -60,7 +60,9 @@ const CommentListItem = ({singleComment, updateCommentAmount}) => {
       <RNEListItem.Content>
         <RNEListItem.Title h4>{owner.username}</RNEListItem.Title>
         {owner.user_id === loggedUser.user_id ? (
-          <RNEListItem.Subtitle>{singleComment.comment}</RNEListItem.Subtitle>
+          <RNEListItem.Subtitle style={styles.userComment}>
+            {singleComment.comment}
+          </RNEListItem.Subtitle>
         ) : (
           <RNEListItem.Subtitle>{singleComment.comment}</RNEListItem.Subtitle>
         )}
@@ -80,6 +82,12 @@ const CommentListItem = ({singleComment, updateCommentAmount}) => {
     </RNEListItem>
   );
 };
+
+const styles = StyleSheet.create({
+  userComment: {
+    color: 'green',
+  },
+});
 
 CommentListItem.propTypes = {
   singleComment: PropTypes.object,
