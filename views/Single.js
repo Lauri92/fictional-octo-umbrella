@@ -254,7 +254,11 @@ const Single = ({route, navigation}) => {
           {/* </ListItem> */}
         </Card>
         <Card>
-          <CommentList file={file} commentArray={commentArray} />
+          <CommentList
+            file={file}
+            commentArray={commentArray}
+            updateCommentAmount={itemComments}
+          />
         </Card>
       </ScrollView>
       <FloatingActionButton

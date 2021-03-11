@@ -7,7 +7,7 @@ import moment from 'moment';
 import {Alert} from 'react-native';
 import {MainContext} from '../contexts/MainContext';
 
-const CommentListItem = ({singleComment}) => {
+const CommentListItem = ({singleComment, updateCommentAmount}) => {
   const {getUser, checkToken} = useUser();
   const {deleteComment} = useComment();
   const [owner, setOwner] = useState({});
@@ -39,6 +39,7 @@ const CommentListItem = ({singleComment}) => {
             try {
               await deleteComment(singleComment.comment_id, userToken);
               setUpdate(update + 1);
+              updateCommentAmount();
             } catch (error) {
               // notify user here?
               console.error(error);
@@ -82,6 +83,7 @@ const CommentListItem = ({singleComment}) => {
 
 CommentListItem.propTypes = {
   singleComment: PropTypes.object,
+  updateCommentAmount: PropTypes.func,
 };
 
 export default CommentListItem;
