@@ -125,10 +125,14 @@ const Profile = ({navigation}) => {
             onPress={toggleEmailOverlay}
           />
         </ListItem>
-        <ListItem>
-          <Avatar icon={{name: 'user', type: 'font-awesome', color: 'black'}} />
-          <Text>{user.full_name}</Text>
-        </ListItem>
+        {user.full_name !== null && (
+          <ListItem>
+            <Avatar
+              icon={{name: 'user', type: 'font-awesome', color: 'black'}}
+            />
+            <Text>{user.full_name}</Text>
+          </ListItem>
+        )}
         <ListItem bottomDivider onPress={() => navigation.push('My Files')}>
           <Avatar icon={{name: 'perm-media', color: 'black'}} />
           <ListItem.Content>
