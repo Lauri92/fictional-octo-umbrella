@@ -70,7 +70,7 @@ const Upload = ({navigation}) => {
       console.log('posting app identifier', tagResponse);
       Alert.alert(
         'Upload',
-        'File uploaded',
+        'Item uploaded',
         [
           {
             text: 'Ok',
@@ -135,7 +135,7 @@ const Upload = ({navigation}) => {
     <ScrollView>
       <KeyboardAvoidingView behavior="position" enabled>
         <Card>
-          <Text h4>Upload media file</Text>
+          <Text h4>Upload item</Text>
           {image && (
             <>
               {filetype === 'image' ? (
